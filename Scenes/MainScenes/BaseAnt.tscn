@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cbtvivpdise2d"]
+
+[ext_resource type="Script" uid="uid://1q1wibhqle7u" path="res://Scripts/Objects/BaseAnt.gd" id="1_6qhd8"]
+
+[node name="BaseAnt" type="Node2D" unique_id=977467608]
+script = ExtResource("1_6qhd8")

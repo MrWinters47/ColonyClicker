@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="ColonyStats" format=3 uid="uid://crm0ft10bii5c"]
+
+[ext_resource type="Script" uid="uid://dacorwoyvmdla" path="res://Scripts/Objects/ColonyStats.gd" id="1_hmkmp"]
+
+[resource]
+script = ExtResource("1_hmkmp")
+colony_name = "Carpenter Ant"
+species = "carpenter"
+metadata/_custom_type_script = "uid://dacorwoyvmdla"

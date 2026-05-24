@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://clul2cuetkyhf"]
+
+[ext_resource type="Script" uid="uid://8smyrpnt0m75" path="res://Scenes/MainScenes/MainSceneScript.gd" id="1_srh2q"]
+[ext_resource type="PackedScene" uid="uid://bo6mljpmg8abj" path="res://Scenes/MainScenes/World.tscn" id="2_ubj7s"]
+[ext_resource type="PackedScene" uid="uid://c86rwxhiw1wry" path="res://Scenes/MainScenes/MainUI.tscn" id="3_o5ll3"]
+[ext_resource type="Script" uid="uid://6gphmssrfpfb" path="res://Scripts/Objects/FoodSpawner.gd" id="4_iiovm"]
+[ext_resource type="PackedScene" uid="uid://yqi3t32jw0dd" path="res://Scenes/DevTools.tscn" id="5_rnmnv"]
+
+[node name="Node2D" type="Node2D" unique_id=375048921]
+script = ExtResource("1_srh2q")
+
+[node name="World" parent="." unique_id=389287759 instance=ExtResource("2_ubj7s")]
+position = Vector2(-23, 41)
+
+[node name="MainUI" parent="." unique_id=1765790925 instance=ExtResource("3_o5ll3")]
+
+[node name="Node2D" type="Node2D" parent="." unique_id=390982982]
+script = ExtResource("4_iiovm")
+
+[node name="ColonyEntrance" type="Marker2D" parent="." unique_id=1680976976]
+position = Vector2(526, 2012)
+
+[node name="CanvasLayer" parent="." unique_id=773104919 instance=ExtResource("5_rnmnv")]

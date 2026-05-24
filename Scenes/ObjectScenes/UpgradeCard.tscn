@@ -1,0 +1,44 @@
+[gd_scene format=3 uid="uid://blpg6ldorvtie"]
+
+[ext_resource type="Script" uid="uid://co4vlw2cbsp3h" path="res://Scripts/Objects/UpgradeCard.gd" id="1_8ishx"]
+[ext_resource type="Texture2D" uid="uid://cdflo5m22rhvp" path="res://Assets/Art/upgrade_card.png" id="1_bchcd"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ud7hn"]
+texture = ExtResource("1_bchcd")
+
+[node name="PanelContainer" type="PanelContainer" unique_id=1502895155]
+offset_left = -113.0
+offset_top = -40.0
+offset_right = 128.0
+offset_bottom = 49.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_ud7hn")
+script = ExtResource("1_8ishx")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1367152585]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer" unique_id=857808360]
+layout_mode = 2
+
+[node name="UpgradeName" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=36561427]
+layout_mode = 2
+text = "sdsdsdsdsdsdsdsd"
+
+[node name="UpgradeDesc" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=1431213806]
+layout_mode = 2
+text = "sdsdsdsdsdsdsdsd"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer" unique_id=2119130701]
+layout_mode = 2
+
+[node name="UpgradeCost" type="Label" parent="HBoxContainer/VBoxContainer2" unique_id=438630297]
+layout_mode = 2
+text = "zgfthe"
+
+[node name="BuyButton" type="Button" parent="HBoxContainer/VBoxContainer2" unique_id=1133805127]
+layout_mode = 2
+size_flags_vertical = 3
+text = "	BUY"
+
+[node name="ProgressBar" type="ProgressBar" parent="HBoxContainer/VBoxContainer2" unique_id=2139310598]
+layout_mode = 2

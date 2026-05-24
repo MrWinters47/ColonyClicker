@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="ColonyStats" format=3 uid="uid://c2x74ckbaxuok"]
+
+[ext_resource type="Script" uid="uid://dacorwoyvmdla" path="res://Scripts/Objects/ColonyStats.gd" id="1_035og"]
+
+[resource]
+script = ExtResource("1_035og")
+colony_name = "Fire Ant"
+species = "fire_ant"
+base_health = 90.0
+base_attack = 14.0
+base_defense = 4.0
+base_speed = 1.2
+base_forage_rate = 1.3
+venom = 5.0
+cohesion = 0.4
+aggression = 0.85
+panic_resist = 0.5
+queen_buff = 1.05
+max_workers = 25
+max_soldiers = 12
+ability_id = "venom_burst"
+metadata/_custom_type_script = "uid://dacorwoyvmdla"

@@ -1,0 +1,69 @@
+[gd_scene format=3 uid="uid://c6n7o1kyogcyv"]
+
+[ext_resource type="Texture2D" uid="uid://d20ean0pjfp73" path="res://Assets/UI/orange_panel.png" id="1_if0mf"]
+[ext_resource type="Script" uid="uid://dqoa5fmhej1k0" path="res://Scripts/MainScripts/BattleScene.gd" id="1_tlx50"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_xiy07"]
+texture = ExtResource("1_if0mf")
+texture_margin_left = 72.0
+texture_margin_top = 410.0
+texture_margin_right = 72.0
+texture_margin_bottom = 480.0
+
+[node name="PanelContainer" type="PanelContainer" unique_id=1077392442]
+offset_left = 5.0
+offset_top = 10.0
+offset_right = 1083.0
+offset_bottom = 2414.0
+mouse_filter = 2
+mouse_behavior_recursive = 1
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxTexture_xiy07")
+script = ExtResource("1_tlx50")
+
+[node name="PlayerSide" type="VBoxContainer" parent="." unique_id=1941322335]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PlayerSide" unique_id=1365060772]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PlayerSide/HBoxContainer" unique_id=950419907]
+layout_mode = 2
+
+[node name="PlayerName" type="Label" parent="PlayerSide/HBoxContainer/VBoxContainer" unique_id=737646823]
+layout_mode = 2
+
+[node name="PlayerBar" type="ProgressBar" parent="PlayerSide/HBoxContainer/VBoxContainer" unique_id=1754502832]
+layout_mode = 2
+
+[node name="VsLabel" type="Label" parent="PlayerSide/HBoxContainer" unique_id=1279169743]
+layout_mode = 2
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="PlayerSide/HBoxContainer" unique_id=981750206]
+layout_mode = 2
+
+[node name="EnemyPortrait" type="TextureRect" parent="PlayerSide/HBoxContainer/VBoxContainer2" unique_id=936011739]
+layout_mode = 2
+
+[node name="EnemyName" type="Label" parent="PlayerSide/HBoxContainer/VBoxContainer2" unique_id=1079763873]
+layout_mode = 2
+
+[node name="EnemyBar" type="ProgressBar" parent="PlayerSide/HBoxContainer/VBoxContainer2" unique_id=1530337201]
+layout_mode = 2
+
+[node name="OddsBar" type="ProgressBar" parent="PlayerSide" unique_id=1122730511]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PlayerSide" unique_id=974686719]
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FightButton" type="Button" parent="PlayerSide" unique_id=164613812]
+custom_minimum_size = Vector2(100, 200)
+layout_mode = 2
+text = "BATTLE"
+
+[node name="CloseButton" type="Button" parent="PlayerSide" unique_id=1508622542]
+layout_mode = 2
+text = "CLOSE"

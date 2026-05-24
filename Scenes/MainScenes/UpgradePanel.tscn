@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://cx5ycnxu8samw"]
+
+[ext_resource type="Texture2D" uid="uid://c58867mfdmh22" path="res://Assets/Art/upgrades_panel.png" id="1_5olh6"]
+[ext_resource type="Script" uid="uid://cs1ce5h10bi0f" path="res://Scripts/UpgradePanel.gd" id="1_j13m3"]
+[ext_resource type="PackedScene" uid="uid://blpg6ldorvtie" path="res://Scenes/ObjectScenes/UpgradeCard.tscn" id="3_nv4jm"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_nv4jm"]
+content_margin_left = 216.0
+content_margin_top = 120.0
+texture = ExtResource("1_5olh6")
+
+[node name="UpgradePanel" type="PanelContainer" unique_id=1273350527]
+offset_right = 648.0
+offset_bottom = 1103.0
+size_flags_horizontal = 6
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxTexture_nv4jm")
+script = ExtResource("1_j13m3")
+
+[node name="Node2D" type="Node2D" parent="." unique_id=1303585358]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1885731037]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=550940899]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=82056163]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="UpgradeList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer" unique_id=1843788523]
+layout_mode = 2
+
+[node name="PanelContainer" parent="VBoxContainer/ScrollContainer/UpgradeList" unique_id=1502895155 instance=ExtResource("3_nv4jm")]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="VBoxContainer" unique_id=2006292947]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.99865025, 0.38719958, 0.34041733, 1)
+theme_override_font_sizes/font_size = 57
+text = "X"
+autowrap_mode = 2

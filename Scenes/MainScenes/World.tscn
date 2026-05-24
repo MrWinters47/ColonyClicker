@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://bo6mljpmg8abj"]
+
+[ext_resource type="Texture2D" uid="uid://mhcs76q8q4x6" path="res://Assets/Art/ground_dark.png" id="1_b1pso"]
+[ext_resource type="Texture2D" uid="uid://d0nnxuxak0ctx" path="res://Assets/Art/mound.png" id="2_l1ntp"]
+
+[node name="World" type="Node2D" unique_id=389287759]
+
+[node name="GroundDark" type="Sprite2D" parent="." unique_id=370396779]
+auto_translate_mode = 2
+position = Vector2(521, 1171.9999)
+scale = Vector2(3.061111, 2.961111)
+texture = ExtResource("1_b1pso")
+
+[node name="Mound" type="Sprite2D" parent="." unique_id=1439993861]
+position = Vector2(558, 1982.9999)
+scale = Vector2(0.31527093, 0.31527096)
+texture = ExtResource("2_l1ntp")

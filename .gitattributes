@@ -1,0 +1,61 @@
+# =============================================================
+#  .gitattributes — Godot 4 + Photoshop Project
+#  cc-main
+# =============================================================
+
+# ---------------------------------------------------------------
+# DEFAULT: Normalize line endings for all text files
+# ---------------------------------------------------------------
+* text=auto eol=lf
+
+# ---------------------------------------------------------------
+# GODOT TEXT FILES — Force LF line endings
+# ---------------------------------------------------------------
+*.gd        text eol=lf
+*.gdshader  text eol=lf
+*.tscn      text eol=lf
+*.tres      text eol=lf
+*.godot     text eol=lf
+*.import    text eol=lf
+
+# ---------------------------------------------------------------
+# GIT LFS — Binary Art Assets
+# These files are tracked by Git but their CONTENTS are stored
+# in Large File Storage (LFS) instead of the regular Git repo.
+# Run "git lfs install" once before using this repo.
+# ---------------------------------------------------------------
+
+# Photoshop source files (large!)
+*.psd       filter=lfs diff=lfs merge=lfs -text
+*.psb       filter=lfs diff=lfs merge=lfs -text
+
+# Raster images
+*.png       filter=lfs diff=lfs merge=lfs -text
+*.jpg       filter=lfs diff=lfs merge=lfs -text
+*.jpeg      filter=lfs diff=lfs merge=lfs -text
+*.webp      filter=lfs diff=lfs merge=lfs -text
+*.tga       filter=lfs diff=lfs merge=lfs -text
+*.bmp       filter=lfs diff=lfs merge=lfs -text
+*.exr       filter=lfs diff=lfs merge=lfs -text
+*.hdr       filter=lfs diff=lfs merge=lfs -text
+
+# Vector / SVG — small enough for regular Git, but LFS if they grow large
+# *.svg     filter=lfs diff=lfs merge=lfs -text
+
+# Audio
+*.wav       filter=lfs diff=lfs merge=lfs -text
+*.ogg       filter=lfs diff=lfs merge=lfs -text
+*.mp3       filter=lfs diff=lfs merge=lfs -text
+*.flac      filter=lfs diff=lfs merge=lfs -text
+
+# Fonts
+*.ttf       filter=lfs diff=lfs merge=lfs -text
+*.otf       filter=lfs diff=lfs merge=lfs -text
+
+# Video / Cutscenes
+*.mp4       filter=lfs diff=lfs merge=lfs -text
+*.webm      filter=lfs diff=lfs merge=lfs -text
+*.ogv       filter=lfs diff=lfs merge=lfs -text
+
+# Godot packed scenes / binaries
+*.pck       filter=lfs diff=lfs merge=lfs -text

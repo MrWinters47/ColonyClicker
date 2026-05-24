@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://yqi3t32jw0dd"]
+
+[ext_resource type="Script" uid="uid://bqr5nc6xcq5yp" path="res://Scripts/dev_tools.gd" id="1_ascks"]
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=773104919]
+script = ExtResource("1_ascks")
+
+[node name="DevTools" type="Node2D" parent="." unique_id=841604882]
