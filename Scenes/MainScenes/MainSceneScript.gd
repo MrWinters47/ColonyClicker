@@ -13,43 +13,29 @@ var _overlay_label: Label
 # ─── Auto-spawn tiers — once colony hits threshold, auto-add this batch every interval
 const SPAWN_TIERS = [
 	{"threshold": 20,   "interval": 30.0,  "batch": 1},
-	{"threshold": 50,   "interval": 15.0,  "batch": 3},
-	{"threshold": 100,  "interval": 8.0,   "batch": 8},
-	{"threshold": 500,  "interval": 3.0,   "batch": 20},
-	{"threshold": 1000, "interval": 1.0,   "batch": 50},
-	{"threshold": 5000, "interval": 0.5,   "batch": 200},
+	{"threshold": 50,   "interval": 15.0,  "batch": 1},
+	{"threshold": 100,  "interval": 8.0,   "batch": 1},
+	{"threshold": 500,  "interval": 3.0,   "batch": 1},
+	{"threshold": 1000, "interval": 1.0,   "batch": 2},
+	{"threshold": 5000, "interval": 0.5,   "batch": 3},
 ]
 var _auto_spawn_timer: float = 0.0
 
-# ─── Visual thresholds — real ant count needed to unlock each visual ant on screen
-# Tune these numbers to feel right
-const VISUAL_THRESHOLDS: Array = [
-	20,    # 1st ant on screen
-	50,    # 2nd
-	90,    # 3rd
-	140,   # 4th
-	200,   # 5th
-	270,   # 6th
-	350,   # 7th
-	440,   # 8th
-	540,   # 9th
-	650,   # 10th
-	800,   # 11th
-	1000,  # 12th
-	1250,  # 13th
-	1550,  # 14th
-	1900,  # 15th
-	2300,  # 16th
-	2800,  # 17th
-	3400,  # 18th
-	4100,  # 19th
-	5000,  # 20th
-	6000,  # 21st
-	7200,  # 22nd
-	8600,  # 23rd
-	10000, # 24th
-	12000, # 25th
-]
+# ─── Visual ant threshold config — tune these 3 values to control pacing
+const VISUAL_ANT_COUNT: int   = 150    # max ants ever shown on screen
+const THRESHOLD_BASE: float   = 50.0  # real ant count to unlock the 1st visual ant
+const THRESHOLD_SCALE: float  = 3.0  # curve steepness — try 1.25 to 1.5
+
+var visual_thresholds: Array = []
+
+
+func _build_thresholds() -> void:
+	# ─── Generate thresholds mathematically instead of hardcoding 25 values
+	visual_thresholds.clear()
+	for i in range(VISUAL_ANT_COUNT):
+		var t = int(THRESHOLD_BASE * pow(THRESHOLD_SCALE, i))
+		visual_thresholds.append(t)
+
 
 func _ready() -> void:
 	colony_manager.load_colony(CarpenterColony)
@@ -60,6 +46,8 @@ func _ready() -> void:
 	_setup_overlay()
 	EventBus.colony_loaded.emit(GameManager.active_colony)
 	GameManager.colony_position = $ColonyEntrance.position
+	_build_thresholds()
+
 
 func _process(delta: float) -> void:
 	# ─── Auto-spawn ticker — adds to real count only
@@ -72,6 +60,7 @@ func _process(delta: float) -> void:
 	# ─── Keep visual ants in sync with thresholds
 	_maintain_visual_ants()
 
+
 func _get_auto_spawn_interval() -> float:
 	# ─── Find highest matching tier for current colony size
 	var count    = GameManager.ant_count
@@ -80,6 +69,7 @@ func _get_auto_spawn_interval() -> float:
 		if count >= tier.threshold:
 			interval = tier.interval
 	return interval
+
 
 func _auto_spawn_batch() -> void:
 	# ─── Add ants to real count — visual maintenance handles the rest
@@ -91,16 +81,19 @@ func _auto_spawn_batch() -> void:
 	GameManager.ant_count += batch
 	EventBus.ant_spawned.emit(null)
 
+
 func _get_visual_target() -> int:
 	# ─── Count how many thresholds the colony has passed
+	# FIX: was referencing VISUAL_THRESHOLDS (old const) — now uses visual_thresholds (the built array)
 	var count  = GameManager.ant_count
 	var target = 0
-	for threshold in VISUAL_THRESHOLDS:
+	for threshold in visual_thresholds:
 		if count >= threshold:
 			target += 1
 		else:
 			break
-	return min(target, GameManager.MAX_VISUAL_ANTS)
+	return min(target, VISUAL_ANT_COUNT)
+
 
 func _maintain_visual_ants() -> void:
 	# ─── Spawn a visual ant if colony has unlocked more than are on screen
@@ -109,16 +102,19 @@ func _maintain_visual_ants() -> void:
 	if current < target:
 		_spawn_visual_ant()
 
+
 func _spawn_visual_ant() -> void:
-	# ─── Create one Node2D ant to represent the colony
 	var ant = AntScene.instantiate()
 	ant.position = GameManager.colony_position + Vector2(randf_range(-40, 40), randf_range(-40, 40))
 	add_child(ant)
 	ant.setup(colony_manager)
+	EventBus.ant_spawned.emit(null)
+
 
 func _on_ant_spawned(_data) -> void:
 	# ─── Signal received — visual maintenance in _process handles spawning
 	pass
+
 
 func _setup_overlay() -> void:
 	# ─── Full screen fade overlay for prestige transition
@@ -139,6 +135,7 @@ func _setup_overlay() -> void:
 	layer.add_child(_overlay_label)
 	add_child(layer)
 
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton \
 	and event.button_index == MOUSE_BUTTON_LEFT \
@@ -154,6 +151,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		for ant in forage_ants.slice(0, GameManager.ant_click_influence):
 			ant.command_to_pos(world_pos)
 
+
 func _show_rally_marker(pos: Vector2) -> void:
 	# ─── Orange ring at click position
 	if is_instance_valid(_rally_marker):
@@ -164,9 +162,11 @@ func _show_rally_marker(pos: Vector2) -> void:
 	add_child(marker)
 	_rally_marker = marker
 
+
 func _on_prestige(new_colony) -> void:
 	colony_manager.reset()
 	_run_transition(new_colony.colony_name)
+
 
 func _run_transition(species_name: String) -> void:
 	# ─── Fade to black, show new species name, reset world
@@ -176,6 +176,10 @@ func _run_transition(species_name: String) -> void:
 
 	for ant in get_tree().get_nodes_in_group("ants"):
 		ant.queue_free()
+
+	# ─── Reset visual count so threshold system starts fresh after prestige
+	GameManager.visual_ant_count = 0
+
 	colony_manager.load_colony(GameManager.active_colony)
 
 	_overlay_label.text = "YOU ARE NOW\n" + species_name.to_upper()

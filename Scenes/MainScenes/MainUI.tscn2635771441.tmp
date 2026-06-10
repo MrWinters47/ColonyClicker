@@ -1,0 +1,211 @@
+[gd_scene format=3 uid="uid://c86rwxhiw1wry"]
+
+[ext_resource type="Script" uid="uid://dvyx4emgnpj2s" path="res://Scripts/MainScripts/MainUI.gd" id="1_hyp62"]
+[ext_resource type="PackedScene" uid="uid://cx5ycnxu8samw" path="res://Scenes/MainScenes/UpgradePanel.tscn" id="2_bw0i0"]
+[ext_resource type="PackedScene" uid="uid://c6n7o1kyogcyv" path="res://Scenes/MainScenes/BattleScene.tscn" id="3_ujxpb"]
+[ext_resource type="Texture2D" uid="uid://cderh4av4eyo" path="res://Assets/UI/top_bar.png" id="4_hyrla"]
+[ext_resource type="Texture2D" uid="uid://mtvm7cjfk5h0" path="res://Assets/UI/spawn_button.png" id="4_osrbs"]
+[ext_resource type="FontFile" uid="uid://c5fapwp3windo" path="res://Assets/Fonts/Jenko-DEMO.ttf" id="5_ouhjm"]
+[ext_resource type="Texture2D" uid="uid://b5l0ktev53hi6" path="res://Assets/UI/spawn_button_pressed.png" id="5_wb172"]
+[ext_resource type="Texture2D" uid="uid://dorsytrnfolq" path="res://Assets/UI/spawn_button_hover.png" id="6_octww"]
+[ext_resource type="Texture2D" uid="uid://bus3wfvieyl12" path="res://Assets/UI/info_panel.png" id="7_ty31w"]
+[ext_resource type="FontFile" uid="uid://b27qv1gmf545v" path="res://Assets/Fonts/PN-Whammy.ttf" id="8_qw6np"]
+[ext_resource type="Texture2D" uid="uid://1fosn0mtcw8s" path="res://Assets/Art/top_circle.png" id="9_grdoe"]
+[ext_resource type="Texture2D" uid="uid://c4klefhcmovyx" path="res://Assets/Art/circle_progress.png" id="10_a4exe"]
+[ext_resource type="Texture2D" uid="uid://hgqtrt2yacup" path="res://Assets/Art/carpenter_queen.png" id="11_np7ql"]
+[ext_resource type="Texture2D" uid="uid://c4fycdpjkwmvg" path="res://Assets/Art/ant_head.png" id="12_a4exe"]
+[ext_resource type="Script" uid="uid://ynxx4hlmidgn" path="res://Scripts/MainScripts/ActivityLog.gd" id="13_np7ql"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icmca"]
+bg_color = Color(0.47058824, 0.6745098, 0.21176471, 0.69803923)
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_np7ql"]
+bg_color = Color(0.29803923, 0.18039216, 0.14117648, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0pdxr"]
+bg_color = Color(0.49803922, 0.84313726, 0.14901961, 1)
+corner_radius_top_left = 24
+corner_radius_top_right = 24
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
+
+[node name="MainUI" type="CanvasLayer" unique_id=1765790925]
+script = ExtResource("1_hyp62")
+
+[node name="UpgradeButton" type="Button" parent="." unique_id=1627379309]
+offset_left = 95.0
+offset_top = 2144.0
+offset_right = 240.0
+offset_bottom = 2247.0
+text = "UPGRADE"
+
+[node name="UpgradePanel" parent="." unique_id=1273350527 instance=ExtResource("2_bw0i0")]
+custom_minimum_size = Vector2(400, 500)
+offset_left = 227.0
+offset_top = 420.0
+offset_right = 875.0
+offset_bottom = 1523.0
+
+[node name="BattleScene" parent="." unique_id=1077392442 instance=ExtResource("3_ujxpb")]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BattleButton" type="Button" parent="." unique_id=760140994]
+offset_left = 836.0
+offset_top = 2142.0
+offset_right = 991.0
+offset_bottom = 2256.0
+text = "BATTLE"
+
+[node name="SpawnButton" type="TextureButton" parent="." unique_id=2099676152]
+offset_left = 260.0
+offset_top = 2104.0
+offset_right = 795.0
+offset_bottom = 2287.0
+texture_normal = ExtResource("4_osrbs")
+texture_pressed = ExtResource("5_wb172")
+texture_hover = ExtResource("6_octww")
+
+[node name="InfoPanel" type="Sprite2D" parent="." unique_id=1431483897]
+position = Vector2(585, 254)
+scale = Vector2(1.0098522, 1)
+texture = ExtResource("7_ty31w")
+
+[node name="Control" type="Control" parent="InfoPanel" unique_id=936010007]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -399.0
+offset_top = -7.0
+offset_right = -406.0
+offset_bottom = -75.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InfoPanel/Control" unique_id=1446927625]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 7.0
+offset_right = -7.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ifno_hb1" type="Label" parent="InfoPanel/Control/HBoxContainer" unique_id=843457172]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("8_qw6np")
+theme_override_font_sizes/font_size = 37
+text = " carpenter queen"
+clip_text = true
+
+[node name="Container" type="Container" parent="InfoPanel/Control/HBoxContainer" unique_id=2040265778]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+
+[node name="ActivityLog" type="PanelContainer" parent="InfoPanel/Control/HBoxContainer" unique_id=871441530]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_icmca")
+script = ExtResource("13_np7ql")
+
+[node name="TopBar" type="Sprite2D" parent="." unique_id=1282075329]
+position = Vector2(545, 152)
+texture = ExtResource("4_hyrla")
+
+[node name="Control" type="Control" parent="TopBar" unique_id=929069084]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -455.0
+offset_top = -106.0
+offset_right = 448.0
+offset_bottom = 115.0
+
+[node name="AntsLabel" type="Label" parent="TopBar/Control" unique_id=2080534362]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -812.0
+offset_top = 36.5
+offset_right = -18.0
+offset_bottom = 87.5
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("5_ouhjm")
+theme_override_font_sizes/font_size = 34
+text = "ANTS:"
+horizontal_alignment = 2
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="SucroseLabel" type="Label" parent="TopBar/Control" unique_id=271253961]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -659.0
+offset_top = -31.0
+offset_right = -18.0
+offset_bottom = 31.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("5_ouhjm")
+theme_override_font_sizes/font_size = 36
+text = "SUCROSE:"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="TopBar/Control" unique_id=170722908]
+layout_mode = 0
+offset_left = -87.0
+offset_top = -25.0
+offset_right = 177.0
+offset_bottom = 237.0
+value = 45.0
+fill_mode = 4
+texture_under = ExtResource("9_grdoe")
+texture_progress = ExtResource("10_a4exe")
+
+[node name="CarpenterQueen" type="Sprite2D" parent="TopBar/Control" unique_id=1675428604]
+position = Vector2(42.25, 108.56177)
+scale = Vector2(0.35810813, 0.35810822)
+texture = ExtResource("11_np7ql")
+
+[node name="AntHead" type="Sprite2D" parent="TopBar" unique_id=352906324]
+position = Vector2(396, -62)
+scale = Vector2(0.15225564, 0.15225564)
+texture = ExtResource("12_a4exe")
+
+[node name="SpawnProgress" type="ProgressBar" parent="." unique_id=65944241]
+offset_left = 341.0
+offset_top = 2303.0
+offset_right = 717.0
+offset_bottom = 2330.0
+theme_override_styles/background = SubResource("StyleBoxFlat_np7ql")
+theme_override_styles/fill = SubResource("StyleBoxFlat_0pdxr")
+show_percentage = false
+
+[node name="MOVE_DOWN" type="AnimationPlayer" parent="." unique_id=1421558522]

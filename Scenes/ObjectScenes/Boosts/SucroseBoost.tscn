@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://bkcn480p8tval"]
+
+[ext_resource type="Texture2D" uid="uid://ci0v6of6eo3uv" path="res://Assets/Art/sucrose_boost_img.png" id="1_uow4o"]
+[ext_resource type="Shader" uid="uid://dxm3vueg0bygx" path="res://Scenes/ObjectScenes/Boosts/SucroseBoost.gdshader" id="2_fgoit"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_20vki"]
+shader = ExtResource("2_fgoit")
+shader_parameter/backFillColour = Color(0.8980392, 0.98039216, 0.07058824, 1)
+shader_parameter/frontFillInnerColour = Color(0.9280188, 0.97859687, 0, 1)
+shader_parameter/frontFillOuterColour = Color(0.95093787, 0.73929507, 0.1897483, 1)
+shader_parameter/ringColour = Color(0.94858456, 0.59608823, 0, 1)
+shader_parameter/fresnelColour = Color(0.8729805, 0.98669523, 0.7585879, 1)
+shader_parameter/innerRingGlowColour = Color(1, 1, 1, 1)
+shader_parameter/outerRingGlowColour = Color(1, 0.8, 0.1, 1)
+shader_parameter/specularColour = Color(1, 1, 0.9, 1)
+shader_parameter/fillcolour = Color(0.98770326, 0.8794011, 0.92875934, 1)
+shader_parameter/backgroundGradientInnerColour = Color(0.13, 0, 0.4, 1)
+shader_parameter/backgroundGradientOuterColour = Color(0, 0, 0, 1)
+shader_parameter/uv_scale = -0.48
+shader_parameter/uv_offset = Vector2(1.038, 1.038)
+shader_parameter/ringWidth = 0.062000002945
+shader_parameter/innerCircleRadiusOffset = -0.021999994525229993
+shader_parameter/fill_value = -0.053999955064999994
+shader_parameter/waveFrequency = 0.69
+shader_parameter/waveAmplitude = 0.025
+shader_parameter/waveAnimationSpeed = 1.9100000000000001
+shader_parameter/fillAnimationFrequency = 3.8449999999999998
+shader_parameter/fillAnimationAmplitude = 0.05
+shader_parameter/fillProgressAnimationFreq = 1.0
+shader_parameter/fillProgressAnimationAmp = 0.1
+shader_parameter/innerRingGlowWidth = 0.01
+shader_parameter/innerRingGlowPowerBase = 1.2
+shader_parameter/outerRingGlowWidth = 0.01
+shader_parameter/outerRingGlowPowerBase = 0.8
+shader_parameter/outerRingGlowAnimationSpeed = 12.0
+shader_parameter/outerRingGlowAnimationRange = 0.2
+shader_parameter/fresnelPower = 5.0
+shader_parameter/frontFillFresnelPower = 5.0
+shader_parameter/specularStrength = -0.04
+shader_parameter/specularArcOffset = 0.35
+shader_parameter/specularArcWidth = 0.065
+shader_parameter/backgroundStrength = 0.65
+
+[node name="Node2D" type="Node2D" unique_id=2137308716]
+
+[node name="SucroseBoostImg" type="Sprite2D" parent="." unique_id=1060165065]
+position = Vector2(2.000023, -7.6293945e-06)
+scale = Vector2(0.30656105, 0.3065611)
+texture = ExtResource("1_uow4o")
+
+[node name="SB_SHADER" type="ColorRect" parent="." unique_id=1544406655]
+self_modulate = Color(1, 1, 1, 0.8235294)
+material = SubResource("ShaderMaterial_20vki")
+offset_left = -100.0
+offset_top = -102.0
+offset_right = 108.0
+offset_bottom = 106.0

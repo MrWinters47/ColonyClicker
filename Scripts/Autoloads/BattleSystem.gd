@@ -1,104 +1,224 @@
 extends Node
 
+# =============================================================================
+# SIGNALS — UI and visual layers connect to these
+# =============================================================================
+signal battle_started(player: Dictionary, enemy: Dictionary)
+signal tick_resolved(snapshot: Dictionary)
+signal crit_landed(side: String, text: String)
+signal narrative_line(text: String)
+signal queen_killed(side: String)
+signal morale_break(side: String)
+signal battle_ended(result: Dictionary)
+
+# =============================================================================
+# BALANCE CONSTANTS — tweak here, nowhere else
+# =============================================================================
 const DAMAGE_VARIANCE   = 0.06
 const CRIT_CHANCE       = 0.08
 const ROUT_THRESHOLD    = 12.0
 const ROUT_CHANCE       = 0.08
 const QUEEN_KILL_CHANCE = 0.020
 const MAX_TICKS         = 500
-const ANT_FORCE_MULT    = 500.0  # each visible ant = 80 battle units
+const ANT_FORCE_MULT    = 500.0   # ⚠️ comment used to say 80 — this is the balance bug
 
-func resolve(enemy: Dictionary) -> Dictionary:
-	var player = _build_player_dict()
-	var a = player.duplicate()
-	var b = enemy.duplicate()
-	a["max_force"] = a.workers + a.soldiers
-	b["max_force"] = b.workers + b.soldiers
-	a["morale"]      = 100.0
-	b["morale"]      = 100.0
-	a["queen_alive"] = GameManager.queen_alive
-	b["queen_alive"] = true
+# =============================================================================
+# TIMING — drives the real-time feel
+# =============================================================================
+const BASE_TICK_INTERVAL: float = 0.12  # 500 ticks × 0.12s = 60s ceiling at 1x
+var   speed_multiplier:   float = 1.0   # 1x / 2x / 4x — UI sets this
+var   tick_interval:      float = BASE_TICK_INTERVAL
+var   _tick_timer:        float = 0.0
 
-	var a_luck = randf_range(0.95, 1.05)
-	var b_luck = randf_range(0.95, 1.05)
-	var log: Array = []
-	var routed = ""
+# =============================================================================
+# STATE
+# =============================================================================
+var is_active: bool = false
+var is_paused: bool = false
 
-	for tick in MAX_TICKS:
-		if _total(a) <= 0 or _total(b) <= 0:
-			break
+var player_state: Dictionary = {}
+var enemy_state:  Dictionary = {}
+var current_tick: int        = 0
+var a_luck:       float      = 1.0
+var b_luck:       float      = 1.0
+var routed:       String     = ""
+var _battle_log:  Array      = []
 
-		var progress  = float(tick) / MAX_TICKS
-		var intensity = 0.4 + progress * 1.0
-		var a_attacks = randf() < (a.speed / (a.speed + b.speed))
+# =============================================================================
+# PUBLIC API
+# =============================================================================
+func start_battle(enemy: Dictionary) -> void:
+	# ─── Reset state and begin a real-time battle
+	if is_active:
+		push_warning("BattleSystem: battle already in progress — overwriting")
+	
+	player_state = _build_player_dict()
+	enemy_state  = enemy.duplicate()
+	
+	player_state["max_force"]   = player_state.workers + player_state.soldiers
+	enemy_state["max_force"]    = enemy_state.workers + enemy_state.soldiers
+	player_state["morale"]      = 100.0
+	enemy_state["morale"]       = 100.0
+	player_state["queen_alive"] = GameManager.queen_alive
+	enemy_state["queen_alive"]  = true
+	
+	a_luck       = randf_range(0.95, 1.05)
+	b_luck       = randf_range(0.95, 1.05)
+	current_tick = 0
+	routed       = ""
+	_battle_log.clear()
+	_tick_timer  = 0.0
+	is_active    = true
+	is_paused    = false
+	
+	battle_started.emit(player_state.duplicate(), enemy_state.duplicate())
 
-		if a_attacks:
-			var result = _tick(a, b, a_luck, intensity)
-			if result.crit and tick % 18 == 0:
-				log.append({"text": "CRIT! Your colony lands a devastating blow!", "pf": _total(a), "ef": _total(b)})
-		else:
-			var result = _tick(b, a, b_luck, intensity)
-			if result.crit and tick % 18 == 0:
-				log.append({"text": "CRIT! %s strikes hard!" % b.name, "pf": _total(a), "ef": _total(b)})
+func set_speed(mult: float) -> void:
+	# ─── 1x / 2x / 4x — can change mid-battle
+	speed_multiplier = max(0.25, mult)
+	tick_interval    = BASE_TICK_INTERVAL / speed_multiplier
 
-		# Narrative snapshots at key moments
-		if tick == 30:
-			log.append({"text": "Both colonies clash — the ground shakes.", "pf": _total(a), "ef": _total(b)})
-		if tick == 60:
-			log.append({"text": _midpoint_line(a, b), "pf": _total(a), "ef": _total(b)})
-		if tick == 100:
-			log.append({"text": _late_line(a, b), "pf": _total(a), "ef": _total(b)})
+func pause() -> void:
+	is_paused = true
 
-		# Queen kill
-		if progress > 0.66:
-			if b.queen_alive and _pct(b) < 0.25 and randf() < QUEEN_KILL_CHANCE:
-				b.queen_alive = false
-				b.morale = max(0, b.morale - 30)
-				log.append({"text": "Their queen has been killed! Enemy morale collapses!", "pf": _total(a), "ef": _total(b)})
-			if a.queen_alive and _pct(a) < 0.25 and randf() < QUEEN_KILL_CHANCE:
-				a.queen_alive = false
-				a.morale = max(0, a.morale - 30)
-				log.append({"text": "Your queen has fallen! Hold the line!", "pf": _total(a), "ef": _total(b)})
+func resume() -> void:
+	is_paused = false
 
-		# Rout check
-		if b.morale < ROUT_THRESHOLD and randf() < ROUT_CHANCE * (1.0 - b.aggression):
-			log.append({"text": "%s breaks and flees!" % b.name, "pf": _total(a), "ef": _total(b)})
-			routed = "enemy"
-			break
-		if a.morale < ROUT_THRESHOLD and randf() < ROUT_CHANCE * (1.0 - a.aggression):
-			log.append({"text": "Your colony breaks under pressure!", "pf": _total(a), "ef": _total(b)})
-			routed = "player"
-			break
+func abort() -> void:
+	# ─── Cancel the battle without emitting battle_ended
+	is_active = false
+	is_paused = false
 
-	var winner = ""
-	var method = ""
+# =============================================================================
+# PROCESS — drives ticks on a timer
+# =============================================================================
+func _process(delta: float) -> void:
+	if not is_active or is_paused:
+		return
+	
+	_tick_timer += delta
+	if _tick_timer >= tick_interval:
+		_tick_timer = 0.0
+		_advance_tick()
+
+func _advance_tick() -> void:
+	# ─── End conditions
+	if _total(player_state) <= 0 or _total(enemy_state) <= 0:
+		_finalize()
+		return
+	if current_tick >= MAX_TICKS:
+		_finalize()
+		return
+	
+	var progress  = float(current_tick) / MAX_TICKS
+	var intensity = 0.4 + progress * 1.0
+	var a_attacks = randf() < (player_state.speed / (player_state.speed + enemy_state.speed))
+	
+	if a_attacks:
+		var result = _tick(player_state, enemy_state, a_luck, intensity)
+		if result.crit and current_tick % 18 == 0:
+			var text = "CRIT! Your colony lands a devastating blow!"
+			_emit_log(text, "player")
+			crit_landed.emit("player", text)
+	else:
+		var result = _tick(enemy_state, player_state, b_luck, intensity)
+		if result.crit and current_tick % 18 == 0:
+			var text = "CRIT! %s strikes hard!" % enemy_state.name
+			_emit_log(text, "enemy")
+			crit_landed.emit("enemy", text)
+	
+	# ─── Narrative beats
+	if current_tick == 30:
+		_emit_log("Both colonies clash — the ground shakes.", "")
+	if current_tick == 60:
+		_emit_log(_midpoint_line(player_state, enemy_state), "")
+	if current_tick == 100:
+		_emit_log(_late_line(player_state, enemy_state), "")
+	
+	# ─── Queen kill checks
+	if progress > 0.66:
+		if enemy_state.queen_alive and _pct(enemy_state) < 0.25 and randf() < QUEEN_KILL_CHANCE:
+			enemy_state.queen_alive = false
+			enemy_state.morale      = max(0, enemy_state.morale - 30)
+			_emit_log("Their queen has been killed! Enemy morale collapses!", "")
+			queen_killed.emit("enemy")
+		if player_state.queen_alive and _pct(player_state) < 0.25 and randf() < QUEEN_KILL_CHANCE:
+			player_state.queen_alive = false
+			player_state.morale      = max(0, player_state.morale - 30)
+			_emit_log("Your queen has fallen! Hold the line!", "")
+			queen_killed.emit("player")
+	
+	# ─── Rout checks
+	if enemy_state.morale < ROUT_THRESHOLD and randf() < ROUT_CHANCE * (1.0 - enemy_state.aggression):
+		_emit_log("%s breaks and flees!" % enemy_state.name, "")
+		routed = "enemy"
+		morale_break.emit("enemy")
+		_finalize()
+		return
+	if player_state.morale < ROUT_THRESHOLD and randf() < ROUT_CHANCE * (1.0 - player_state.aggression):
+		_emit_log("Your colony breaks under pressure!", "")
+		routed = "player"
+		morale_break.emit("player")
+		_finalize()
+		return
+	
+	current_tick += 1
+	
+	# ─── Snapshot for the UI — health bars, dots, etc.
+	tick_resolved.emit({
+		"tick":       current_tick,
+		"max_tick":   MAX_TICKS,
+		"player":     player_state.duplicate(),
+		"enemy":      enemy_state.duplicate(),
+		"player_pct": _pct(player_state),
+		"enemy_pct":  _pct(enemy_state),
+	})
+
+func _emit_log(text: String, side: String) -> void:
+	_battle_log.append({
+		"text": text,
+		"pf":   _total(player_state),
+		"ef":   _total(enemy_state),
+		"side": side,
+	})
+	narrative_line.emit(text)
+
+func _finalize() -> void:
+	# ─── Wrap up and emit the final result
+	var winner := ""
+	var method := ""
 	if routed == "enemy":
 		winner = "player"; method = "rout"
 	elif routed == "player":
 		winner = "enemy"; method = "rout"
-	elif _total(a) > _total(b):
+	elif _total(player_state) > _total(enemy_state):
 		winner = "player"
-		method = "annihilation" if _total(b) == 0 else "field control"
+		method = "annihilation" if _total(enemy_state) == 0 else "field control"
 	else:
 		winner = "enemy"
-		method = "annihilation" if _total(a) == 0 else "field control"
-
-	log.append({"text": "--- BATTLE OVER ---", "pf": _total(a), "ef": _total(b)})
+		method = "annihilation" if _total(player_state) == 0 else "field control"
+	
+	_emit_log("--- BATTLE OVER ---", "")
 	if winner == "player":
-		log.append({"text": "VICTORY! %s colony defeated!" % b.name, "pf": _total(a), "ef": _total(b), "result": "player"})
+		_emit_log("VICTORY! %s colony defeated!" % enemy_state.name, "player")
 	else:
-		log.append({"text": "DEFEAT. Regroup and try again.", "pf": _total(a), "ef": _total(b), "result": "enemy"})
+		_emit_log("DEFEAT. Regroup and try again.", "enemy")
+	
+	is_active = false
+	
+	battle_ended.emit({
+		"winner":      winner,
+		"method":      method,
+		"player_loss": 1.0 - _pct(player_state),
+		"enemy_loss":  1.0 - _pct(enemy_state),
+		"log":         _battle_log.duplicate(),
+		"max_player":  player_state.get("max_force", 0),
+		"max_enemy":   enemy_state.get("max_force", 0),
+	})
 
-	return {
-		"winner":       winner,
-		"method":       method,
-		"player_loss":  1.0 - _pct(a),
-		"enemy_loss":   1.0 - _pct(b),
-		"log":          log,
-		"max_player":   a.max_force,
-		"max_enemy":    b.max_force
-	}
-
+# =============================================================================
+# CORE COMBAT MATH — unchanged from original
+# =============================================================================
 func _build_player_dict() -> Dictionary:
 	var c = GameManager.active_colony
 	if not c:
@@ -159,11 +279,11 @@ func _pct(c: Dictionary) -> float:
 	return float(_total(c)) / max(1, c.max_force)
 
 func _midpoint_line(a: Dictionary, b: Dictionary) -> String:
-	if _total(a) > _total(b): return "Your colony is pushing them back!"
+	if _total(a) > _total(b):   return "Your colony is pushing them back!"
 	elif _total(b) > _total(a): return "%s has the upper hand..." % b.name
-	else: return "Evenly matched — this could go either way."
+	else:                       return "Evenly matched — this could go either way."
 
 func _late_line(a: Dictionary, b: Dictionary) -> String:
-	if _pct(b) < 0.3: return "The enemy is crumbling — press the attack!"
+	if _pct(b) < 0.3:   return "The enemy is crumbling — press the attack!"
 	elif _pct(a) < 0.3: return "Your colony is barely holding on..."
-	else: return "Both sides fighting to the last ant."
+	else:               return "Both sides fighting to the last ant."

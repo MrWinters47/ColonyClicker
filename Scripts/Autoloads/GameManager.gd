@@ -1,28 +1,34 @@
 extends Node
-
 # ─── Economy
 var sucrose: float = 0.0
+var sucrose_per_sec: float = 0.0
+
+# ─── Sucrose-per-second tracking (rolling 5s average, sampled 4x/sec)
+var _sps_window: Array[float] = []
+var _sps_accum: float = 0.0
+var _sps_timer: float = 0.0
+const SPS_SAMPLE_INTERVAL: float = 0.25
+const SPS_WINDOW_SAMPLES: int = 20
 
 # ─── Colony
 var active_colony  = null
 var colony_position: Vector2 = Vector2(540, 1200)
 var queen_alive: bool = true
-
 # ─── Ant counts — real vs visual
 var ant_count: int        = 0   # real colony size (can be huge)
 var visual_ant_count: int = 0   # actual Node2D ants on screen
-const MAX_VISUAL_ANTS: int = 150
-
+const MAX_VISUAL_ANTS: int = 200
 # ─── Click influence for rally
 var ant_click_influence: int = 1
-
 # ─── Food cache — avoids expensive tree scans per ant
 var food_nodes: Array = []
-
 # ─── Floater batching
 var _pending_sucrose: float = 0.0
 var _floater_timer: float   = 0.0
-const FLOATER_INTERVAL: float = 2.0
+const FLOATER_INTERVAL: float = 1.0
+#----------
+# Spawn boost — starts at 0, upgrades add +0.05 each. Read by clicks AND (later) passive.
+var spawn_multiplier: float = 0
 
 func _process(delta: float) -> void:
 	# ─── Batch floating numbers — one every 2 seconds
@@ -31,6 +37,19 @@ func _process(delta: float) -> void:
 		_floater_timer   = 0.0
 		_spawn_floater(_pending_sucrose)
 		_pending_sucrose = 0.0
+
+	# ─── Sucrose-per-second — measure real income over a rolling window
+	_sps_timer += delta
+	if _sps_timer >= SPS_SAMPLE_INTERVAL:
+		_sps_timer = 0.0
+		_sps_window.append(_sps_accum)
+		_sps_accum = 0.0
+		if _sps_window.size() > SPS_WINDOW_SAMPLES:
+			_sps_window.pop_front()
+		var total := 0.0
+		for g in _sps_window:
+			total += g
+		sucrose_per_sec = total / (_sps_window.size() * SPS_SAMPLE_INTERVAL)
 
 func _spawn_floater(amount: float) -> void:
 	# ─── Spawn a floating number at colony position
@@ -44,6 +63,7 @@ func _spawn_floater(amount: float) -> void:
 func add_sucrose(amount: float) -> void:
 	sucrose          += amount
 	_pending_sucrose += amount
+	_sps_accum       += amount   # ← feed the per-second tracker
 	EventBus.sucrose_changed.emit(sucrose)
 
 func spend_sucrose(amount: float) -> bool:
@@ -58,13 +78,12 @@ func set_colony(colony_stats) -> void:
 	EventBus.colony_loaded.emit(active_colony)
 
 func register_ant() -> void:
-	# ─── Called by visual ants only
 	visual_ant_count += 1
+	print("register_ant called → now ", visual_ant_count)
+	print_stack()
 
 func unregister_ant() -> void:
-	# ─── Called when visual ant dies
-	visual_ant_count  = max(0, visual_ant_count - 1)
-	ant_count         = max(0, ant_count - 1)
+	visual_ant_count = max(0, visual_ant_count - 1)
 
 func register_food(food: Node2D) -> void:
 	food_nodes.append(food)
@@ -78,6 +97,10 @@ func prestige(new_colony_stats) -> void:
 	queen_alive       = true
 	ant_count         = 0
 	visual_ant_count  = 0
+	# ─── Reset the rate tracker too, or it'll show a stale number post-prestige
+	sucrose_per_sec   = 0.0
+	_sps_accum        = 0.0
+	_sps_window.clear()
 	set_colony(new_colony_stats)
 	EventBus.sucrose_changed.emit(sucrose)
 	EventBus.prestige_triggered.emit(new_colony_stats)

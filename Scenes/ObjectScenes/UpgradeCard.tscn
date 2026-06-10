@@ -22,11 +22,11 @@ layout_mode = 2
 
 [node name="UpgradeName" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=36561427]
 layout_mode = 2
-text = "sdsdsdsdsdsdsdsd"
+text = "[UPGRADE NAME]"
 
 [node name="UpgradeDesc" type="Label" parent="HBoxContainer/VBoxContainer" unique_id=1431213806]
 layout_mode = 2
-text = "sdsdsdsdsdsdsdsd"
+text = "[UPGRADE DESC]"
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer" unique_id=2119130701]
 layout_mode = 2

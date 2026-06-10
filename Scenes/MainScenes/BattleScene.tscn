@@ -15,9 +15,6 @@ offset_left = 5.0
 offset_top = 10.0
 offset_right = 1083.0
 offset_bottom = 2414.0
-mouse_filter = 2
-mouse_behavior_recursive = 1
-mouse_force_pass_scroll_events = false
 theme_override_styles/panel = SubResource("StyleBoxTexture_xiy07")
 script = ExtResource("1_tlx50")
 
@@ -58,6 +55,7 @@ layout_mode = 2
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 2
 
 [node name="FightButton" type="Button" parent="PlayerSide" unique_id=164613812]
 custom_minimum_size = Vector2(100, 200)

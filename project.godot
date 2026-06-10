@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="cc_main"
-run/main_scene="uid://clul2cuetkyhf"
+run/main_scene="uid://bxinl40kvpupu"
 config/features=PackedStringArray("4.6", "Mobile")
 config/icon="res://icon.svg"
 
@@ -39,3 +39,4 @@ window/handheld/orientation=1
 
 rendering_device/driver.windows="d3d12"
 renderer/rendering_method="mobile"
+textures/vram_compression/import_etc2_astc=true

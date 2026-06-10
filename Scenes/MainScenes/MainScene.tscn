@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bo6mljpmg8abj" path="res://Scenes/MainScenes/World.tscn" id="2_ubj7s"]
 [ext_resource type="PackedScene" uid="uid://c86rwxhiw1wry" path="res://Scenes/MainScenes/MainUI.tscn" id="3_o5ll3"]
 [ext_resource type="Script" uid="uid://6gphmssrfpfb" path="res://Scripts/Objects/FoodSpawner.gd" id="4_iiovm"]
-[ext_resource type="PackedScene" uid="uid://yqi3t32jw0dd" path="res://Scenes/DevTools.tscn" id="5_rnmnv"]
+[ext_resource type="PackedScene" uid="uid://yqi3t32jw0dd" path="res://Scenes/ObjectScenes/DevTools.tscn" id="5_rnmnv"]
 
 [node name="Node2D" type="Node2D" unique_id=375048921]
 script = ExtResource("1_srh2q")

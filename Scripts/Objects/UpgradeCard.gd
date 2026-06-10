@@ -1,47 +1,65 @@
 extends PanelContainer
 
+# ─── UI nodes
 @onready var upgrade_name = $HBoxContainer/VBoxContainer/UpgradeName
 @onready var upgrade_desc = $HBoxContainer/VBoxContainer/UpgradeDesc
 @onready var upgrade_cost = $HBoxContainer/VBoxContainer2/UpgradeCost
-@onready var buy_button = $HBoxContainer/VBoxContainer2/BuyButton
+@onready var buy_button   = $HBoxContainer/VBoxContainer2/BuyButton
 @onready var progress_bar = $HBoxContainer/VBoxContainer2/ProgressBar
 
+# ─── Which upgrade this card represents — set once, everything else is read live
 var upgrade_id: String = ""
-var cost: float = 50.0
-var current_level: int = 0
-var max_level: int = 10
 
-func setup(id: String, display_name: String, desc: String, base_cost: float, max_lvl: int = 10) -> void:
+# ─── Wire the card to an id; UpgradeManager is the source of truth from here on
+func setup(id: String) -> void:
 	upgrade_id = id
-	cost = base_cost
-	max_level = max_lvl
-	upgrade_name.text = display_name
-	upgrade_desc.text = desc
-	progress_bar.max_value = max_level
-	progress_bar.value = 0
-	_update_ui()
+	var upgrade = UpgradeManager.get_def(id)
+	if not upgrade:
+		push_error("UpgradeCard: no def registered for id " + id)
+		return
+	upgrade_name.text      = upgrade.display_name
+	upgrade_desc.text      = upgrade.description
+	progress_bar.max_value = upgrade.max_level
 	buy_button.pressed.connect(_on_buy_pressed)
-	EventBus.sucrose_changed.connect(_on_sucrose_changed)
+	EventBus.sucrose_changed.connect(func(_amount): _refresh())
 	EventBus.upgrade_purchased.connect(_on_upgrade_purchased)
+	_refresh()
 
-func _update_ui() -> void:
-	upgrade_cost.text = "Cost: " + str(cost)
-	progress_bar.value = current_level
-	if current_level >= max_level:
-		buy_button.text = "MAX"
+# ─── Repaint the card based on the live state of the upgrade + player
+func _refresh() -> void:
+	var upgrade = UpgradeManager.get_def(upgrade_id)
+	var level   = UpgradeManager.get_level(upgrade_id)
+	progress_bar.value = level
+
+	# ─── Locked — prereq not yet met. Visible but greyed out (Egg Inc style)
+	if not UpgradeManager.is_unlocked(upgrade_id):
+		var prereq      = UpgradeManager.get_def(upgrade.prerequisite_id)
+		var prereq_name = prereq.display_name if prereq else upgrade.prerequisite_id
+		upgrade_cost.text   = "Locked — needs " + prereq_name + " Lv " + str(upgrade.prerequisite_level)
+		buy_button.text     = "LOCKED"
 		buy_button.disabled = true
-	else:
-		buy_button.text = "Buy"
+		modulate            = Color(0.55, 0.55, 0.55, 1.0)
+		return
 
-func _on_sucrose_changed(amount: float) -> void:
-	if current_level < max_level:
-		buy_button.disabled = amount < cost
+	# ─── Maxed — fully purchased
+	if level >= upgrade.max_level:
+		upgrade_cost.text   = "MAXED"
+		buy_button.text     = "MAX"
+		buy_button.disabled = true
+		modulate            = Color(1, 1, 1, 1)
+		return
 
-func _on_upgrade_purchased(id: String) -> void:
-	if id == upgrade_id:
-		current_level += 1
-		_update_ui()
+	# ─── Buyable — show live scaled cost
+	var cost = UpgradeManager.get_cost(upgrade_id)
+	upgrade_cost.text   = "Cost: " + str(int(cost))
+	buy_button.text     = "Buy"
+	buy_button.disabled = GameManager.sucrose < cost
+	modulate            = Color(1, 1, 1, 1)
 
+# ─── Any purchase anywhere might have unlocked us — refresh
+func _on_upgrade_purchased(_id: String) -> void:
+	_refresh()
+
+# ─── Route through UpgradeManager. No direct spend_sucrose here.
 func _on_buy_pressed() -> void:
-	if GameManager.spend_sucrose(cost):
-		EventBus.upgrade_purchased.emit(upgrade_id)
+	UpgradeManager.purchase(upgrade_id)

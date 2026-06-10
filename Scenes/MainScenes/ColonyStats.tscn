@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://b7655sso3ibn6"]
+
+[ext_resource type="Texture2D" uid="uid://dcikmtnbytbbl" path="res://Assets/UI/colony_stats_panel.png" id="1_66815"]
+[ext_resource type="FontFile" uid="uid://dlnbkn2s3dxgo" path="res://Assets/Fonts/Bostone.ttf" id="2_bcbrd"]
+[ext_resource type="FontFile" uid="uid://c5fapwp3windo" path="res://Assets/Fonts/Jenko-DEMO.ttf" id="3_0140x"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sayhx"]
+bg_color = Color(0.13435918, 0.17225093, 0.033221684, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+corner_detail = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uugko"]
+bg_color = Color(0.33003333, 0.97587764, 0.09985284, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=1332332968]
+
+[node name="ColonyStatsPanel" type="Sprite2D" parent="." unique_id=693600595]
+position = Vector2(535, 767)
+texture = ExtResource("1_66815")
+
+[node name="Control" type="Control" parent="ColonyStatsPanel" unique_id=1239432942]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -347.0
+offset_top = -659.5
+offset_right = -347.0
+offset_bottom = -659.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HeaderLabel" type="Label" parent="ColonyStatsPanel/Control" unique_id=2023626460]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -311.0
+offset_top = 24.5
+offset_right = 323.0
+offset_bottom = 101.5
+grow_horizontal = 2
+theme_override_fonts/font = ExtResource("2_bcbrd")
+theme_override_font_sizes/font_size = 58
+text = "COLONY STATS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="QueenTypeLabel" type="Label" parent="ColonyStatsPanel/Control" unique_id=1859179570]
+layout_mode = 1
+offset_left = 48.0
+offset_top = 115.5
+offset_right = 331.0
+offset_bottom = 164.5
+theme_override_fonts/font = ExtResource("3_0140x")
+theme_override_font_sizes/font_size = 24
+text = "QUEEN:"
+vertical_alignment = 1
+
+[node name="AntLabel" type="Label" parent="ColonyStatsPanel/Control" unique_id=979101179]
+layout_mode = 1
+offset_left = 368.0
+offset_top = 114.5
+offset_right = 651.0
+offset_bottom = 164.5
+theme_override_fonts/font = ExtResource("3_0140x")
+theme_override_font_sizes/font_size = 24
+text = "ants:"
+vertical_alignment = 1
+uppercase = true
+
+[node name="StrLabel" type="Label" parent="ColonyStatsPanel/Control" unique_id=1407182551]
+layout_mode = 1
+offset_left = 51.0
+offset_top = 210.5
+offset_right = 334.0
+offset_bottom = 260.5
+theme_override_fonts/font = ExtResource("3_0140x")
+theme_override_font_sizes/font_size = 24
+text = "COLONY STRENGTH:"
+vertical_alignment = 1
+uppercase = true
+
+[node name="ColonyStrengthProgress" type="ProgressBar" parent="ColonyStatsPanel/Control" unique_id=479776743]
+layout_mode = 0
+offset_left = 372.0
+offset_top = 223.5
+offset_right = 633.0
+offset_bottom = 250.5
+theme_override_styles/background = SubResource("StyleBoxFlat_sayhx")
+theme_override_styles/fill = SubResource("StyleBoxFlat_uugko")
+value = 49.06
+show_percentage = false

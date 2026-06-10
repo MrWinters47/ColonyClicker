@@ -8,11 +8,24 @@
 [ext_resource type="FontFile" uid="uid://c5fapwp3windo" path="res://Assets/Fonts/Jenko-DEMO.ttf" id="5_ouhjm"]
 [ext_resource type="Texture2D" uid="uid://b5l0ktev53hi6" path="res://Assets/UI/spawn_button_pressed.png" id="5_wb172"]
 [ext_resource type="Texture2D" uid="uid://dorsytrnfolq" path="res://Assets/UI/spawn_button_hover.png" id="6_octww"]
+[ext_resource type="Texture2D" uid="uid://bus3wfvieyl12" path="res://Assets/UI/info_panel.png" id="7_ty31w"]
+[ext_resource type="FontFile" uid="uid://b27qv1gmf545v" path="res://Assets/Fonts/PN-Whammy.ttf" id="8_qw6np"]
 [ext_resource type="Texture2D" uid="uid://1fosn0mtcw8s" path="res://Assets/Art/top_circle.png" id="9_grdoe"]
+[ext_resource type="Script" uid="uid://bqs5nm7u1hnab" path="res://Scripts/Objects/sps_label.gd" id="10_7drfd"]
 [ext_resource type="Texture2D" uid="uid://c4klefhcmovyx" path="res://Assets/Art/circle_progress.png" id="10_a4exe"]
+[ext_resource type="FontFile" uid="uid://dlnbkn2s3dxgo" path="res://Assets/Fonts/Bostone.ttf" id="10_j74b8"]
 [ext_resource type="Texture2D" uid="uid://hgqtrt2yacup" path="res://Assets/Art/carpenter_queen.png" id="11_np7ql"]
 [ext_resource type="Texture2D" uid="uid://c4fycdpjkwmvg" path="res://Assets/Art/ant_head.png" id="12_a4exe"]
 [ext_resource type="Script" uid="uid://ynxx4hlmidgn" path="res://Scripts/MainScripts/ActivityLog.gd" id="13_np7ql"]
+[ext_resource type="AudioStream" uid="uid://c3kls42v2vly" path="res://Assets/Audio/click.wav" id="16_qw6np"]
+[ext_resource type="AudioStream" uid="uid://bijroxdvmvvxx" path="res://Assets/Audio/277033__headphaze__ui-completed-status-alert-notification-sfx001.wav" id="17_icmca"]
+[ext_resource type="Shader" uid="uid://bbh7pv88xaofj" path="res://Scenes/MainScenes/MainUI.gdshader" id="18_dws1n"]
+[ext_resource type="PackedScene" uid="uid://bkcn480p8tval" path="res://Scenes/ObjectScenes/Boosts/SucroseBoost.tscn" id="21_db3p1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icmca"]
+bg_color = Color(0.47058824, 0.6745098, 0.21176471, 0.69803923)
+corner_radius_bottom_right = 24
+corner_radius_bottom_left = 24
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_np7ql"]
 bg_color = Color(0.29803923, 0.18039216, 0.14117648, 1)
@@ -28,6 +41,14 @@ corner_radius_top_right = 24
 corner_radius_bottom_right = 24
 corner_radius_bottom_left = 24
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_dws1n"]
+shader = ExtResource("18_dws1n")
+shader_parameter/u_aspect = 0.0
+shader_parameter/progress_color = Color(0.99999994, 0.6259933, 0.3030525, 1)
+shader_parameter/background_color = Color(0.2, 0.2, 0.2, 1)
+shader_parameter/outline_color = Color(0.4, 0.4, 0.4, 1)
+shader_parameter/progress = 1.0
+
 [node name="MainUI" type="CanvasLayer" unique_id=1765790925]
 script = ExtResource("1_hyp62")
 
@@ -39,6 +60,7 @@ offset_bottom = 2247.0
 text = "UPGRADE"
 
 [node name="UpgradePanel" parent="." unique_id=1273350527 instance=ExtResource("2_bw0i0")]
+visible = false
 custom_minimum_size = Vector2(400, 500)
 offset_left = 227.0
 offset_top = 420.0
@@ -73,8 +95,64 @@ texture_normal = ExtResource("4_osrbs")
 texture_pressed = ExtResource("5_wb172")
 texture_hover = ExtResource("6_octww")
 
+[node name="InfoPanel" type="Sprite2D" parent="." unique_id=1431483897]
+position = Vector2(619, 267)
+scale = Vector2(1.0098522, 1)
+texture = ExtResource("7_ty31w")
+
+[node name="Control" type="Control" parent="InfoPanel" unique_id=936010007]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -398.99997
+offset_top = -15.0
+offset_right = -405.99997
+offset_bottom = -83.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InfoPanel/Control" unique_id=1446927625]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 6.0
+offset_top = 18.0
+offset_right = -7.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ifno_hb1" type="Label" parent="InfoPanel/Control/HBoxContainer" unique_id=843457172]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("8_qw6np")
+theme_override_font_sizes/font_size = 29
+text = "SUCROSE PER SECOND"
+clip_text = true
+
+[node name="Container" type="Container" parent="InfoPanel/Control/HBoxContainer" unique_id=2040265778]
+custom_minimum_size = Vector2(10, 10)
+layout_mode = 2
+
+[node name="ActivityLog" type="PanelContainer" parent="InfoPanel/Control/HBoxContainer" unique_id=871441530]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_icmca")
+script = ExtResource("13_np7ql")
+
+[node name="SPSLabel" type="Label" parent="InfoPanel/Control/HBoxContainer/ActivityLog" unique_id=1310085287]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_fonts/font = ExtResource("10_j74b8")
+theme_override_font_sizes/font_size = 31
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("10_7drfd")
+
 [node name="TopBar" type="Sprite2D" parent="." unique_id=1282075329]
-position = Vector2(545, 152)
+position = Vector2(579, 165)
 texture = ExtResource("4_hyrla")
 
 [node name="Control" type="Control" parent="TopBar" unique_id=929069084]
@@ -130,7 +208,7 @@ offset_left = -87.0
 offset_top = -25.0
 offset_right = 177.0
 offset_bottom = 237.0
-value = 45.0
+value = 14.0
 fill_mode = 4
 texture_under = ExtResource("9_grdoe")
 texture_progress = ExtResource("10_a4exe")
@@ -145,13 +223,6 @@ position = Vector2(396, -62)
 scale = Vector2(0.15225564, 0.15225564)
 texture = ExtResource("12_a4exe")
 
-[node name="ActivityLog" type="PanelContainer" parent="." unique_id=871441530]
-offset_left = 703.0
-offset_top = 285.0
-offset_right = 986.0
-offset_bottom = 583.0
-script = ExtResource("13_np7ql")
-
 [node name="SpawnProgress" type="ProgressBar" parent="." unique_id=65944241]
 offset_left = 341.0
 offset_top = 2303.0
@@ -160,3 +231,26 @@ offset_bottom = 2330.0
 theme_override_styles/background = SubResource("StyleBoxFlat_np7ql")
 theme_override_styles/fill = SubResource("StyleBoxFlat_0pdxr")
 show_percentage = false
+
+[node name="MOVE_DOWN" type="AnimationPlayer" parent="." unique_id=1421558522]
+
+[node name="Click" type="AudioStreamPlayer2D" parent="." unique_id=674513631]
+position = Vector2(1090, 1151)
+stream = ExtResource("16_qw6np")
+
+[node name="Sugar_fx" type="AudioStreamPlayer2D" parent="." unique_id=1128965571]
+position = Vector2(34, 13)
+stream = ExtResource("17_icmca")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=2087284652]
+visible = false
+material = SubResource("ShaderMaterial_dws1n")
+offset_left = 12.0
+offset_top = 11.0
+offset_right = 795.0
+offset_bottom = 823.0
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Node2D" parent="." unique_id=2137308716 instance=ExtResource("21_db3p1")]
+position = Vector2(587, 664)

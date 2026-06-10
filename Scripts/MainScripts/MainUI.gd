@@ -12,12 +12,19 @@ extends CanvasLayer
 @onready var battle_panel   = $BattleScene
 @onready var battle_button  = $BattleButton
 
+
 # =============================================================================
 # SPAWN SETTINGS
 # =============================================================================
 # How long the player must wait between spawn clicks
-const SPAWN_DURATION: float = 2.0
+const SPAWN_DURATION: float = 1.0
 var _spawning: bool = false
+
+# Guaranteed ants per manual click — keep low so every ant feels earned
+@export var base_spawn: int = 1
+
+# Banks fractional bonus ants so small multiplier upgrades are never wasted
+var _spawn_remainder: float = 0.0
 
 # =============================================================================
 # READY — wire up all signals and set initial state
@@ -80,37 +87,63 @@ func _on_spawn_pressed() -> void:
 	tween.tween_property(spawn_progress, "value", 100.0, SPAWN_DURATION)
 	tween.finished.connect(_on_spawn_complete)
 
+
 func _on_spawn_complete() -> void:
-	# ─── Reward scales up as colony grows — clicking feels more powerful late game
-	var count  = GameManager.ant_count
-	var reward = 1
+	var reward: int = base_spawn
 
-	if count >= 1000:  reward = 50
-	elif count >= 500: reward = 20
-	elif count >= 100: reward = 8
-	elif count >= 50:  reward = 3
+	_spawn_remainder += base_spawn * GameManager.spawn_multiplier
+	if _spawn_remainder >= 1.0:
+		var bonus: int = int(_spawn_remainder)
+		reward += bonus
+		_spawn_remainder -= bonus
 
+	# ─── Real colony grows — Main.gd threshold system handles visual spawning
 	GameManager.ant_count += reward
 	EventBus.ant_spawned.emit(null)
 
-	# ─── Reset spawn button ready for next click
 	spawn_progress.value  = 0
 	spawn_button.disabled = false
 	_spawning             = false
 	_update_ant_label()
+	play_sfx($Click)
 
+	# ─── Real colony grows — Main.gd threshold system handles visual spawning
+	GameManager.ant_count += reward
+	EventBus.ant_spawned.emit(null)
+
+	spawn_progress.value  = 0
+	spawn_button.disabled = false
+	_spawning             = false
+	_update_ant_label()
+	play_sfx($Click)
+
+	# ─── ant_count is now handled inside register_ant() — remove the manual line
+	EventBus.ant_spawned.emit(null)
+
+	spawn_progress.value  = 0
+	spawn_button.disabled = false
+	_spawning             = false
+	_update_ant_label()
+	play_sfx($Click)
+
+
+# Call this instead of $Click.play() every time you spawn
+func play_sfx(player: AudioStreamPlayer2D) -> void:
+	player.pitch_scale = randf_range(0.25, 1.15)
+	player.play()
 # =============================================================================
 # LABEL UPDATES
 # =============================================================================
 func _on_sucrose_changed(amount: float) -> void:
 	# ─── Show sucrose as clean integer — no decimals
 	sucrose_label.text = "Sucrose: " + str(int(amount))
+	$Sugar_fx.play()
 
 func _update_ant_label() -> void:
-	# ─── Show real colony count (not just visual ants on screen)
-	var colony     = GameManager.active_colony
-	var name       = colony.colony_name if colony else "Colony"
-	ant_label.text = name + " — Colony: " + str(GameManager.ant_count)
+	var colony = GameManager.active_colony
+	var name   = colony.colony_name if colony else "Colony"
+	ant_label.text = name + " — Colony: " + str(GameManager.ant_count) \
+					+ " (" + str(GameManager.visual_ant_count) + " on screen)"
 
 # =============================================================================
 # UPGRADE EFFECTS — applied immediately when purchased
@@ -118,23 +151,41 @@ func _update_ant_label() -> void:
 func _on_upgrade_purchased(id: String) -> void:
 	_apply_upgrade(id)
 
+
 func _apply_upgrade(id: String) -> void:
 	match id:
+		# ─── SPEED branch
 		"faster_legs":
-			# ─── Boost speed on all live ants, capped at 300
+			# +10% speed on every live ant, hard cap 300
 			for ant in get_tree().get_nodes_in_group("ants"):
 				ant.speed = min(ant.speed * 1.10, 300.0)
 
-		"bigger_colony":
-			# ─── Adds directly to real colony count, not visual
-			GameManager.ant_count += 20
-			EventBus.ant_spawned.emit(null)
+		"sprinter_genes":
+			# +5% speed and a higher cap unlocked late
+			for ant in get_tree().get_nodes_in_group("ants"):
+				ant.speed = min(ant.speed * 1.05, 350.0)
 
+		# ─── SPAWN branch — reads/writes the same multiplier clicks and passive both use
+		"faster_hatchery":
+			GameManager.spawn_multiplier += 0.05
+
+		"royal_pheromones":
+			GameManager.spawn_multiplier += 0.10
+
+		# ─── FORAGING branch
 		"better_nose":
-			# ─── Increase food awareness radius on all live ants
 			for ant in get_tree().get_nodes_in_group("ants"):
 				ant.food_awareness_radius *= 1.5
 
+		"hawk_eyes":
+			for ant in get_tree().get_nodes_in_group("ants"):
+				ant.food_awareness_radius *= 1.25
+
+		# ─── COMMAND branch
 		"click_influence":
-			# ─── Each level lets rally clicks command one more ant
 			GameManager.ant_click_influence += 1
+
+		# ─── ONE-OFF
+		"bigger_colony":
+			GameManager.ant_count += 20
+			EventBus.ant_spawned.emit(null)

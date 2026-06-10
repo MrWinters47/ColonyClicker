@@ -24,6 +24,8 @@ const FOOD_CHECK_INTERVAL: float = 0.1
 # =============================================================================
 var colony: ColonyManager = null
 
+@onready var pheromones = get_tree().get_first_node_in_group("pheromone_grid")
+
 func setup(colony_manager: ColonyManager) -> void:
 	# ─── Register with GameManager and pull colony stats
 	GameManager.register_ant()
@@ -104,18 +106,18 @@ const DRAW_INTERVAL: float = 0.1  # 10fps redraws
 # =============================================================================
 # READY
 # =============================================================================
+
+
 func _ready() -> void:
-	# ─── Initialise noise engines with unique seeds per ant
+	# ─── DO NOT call GameManager.register_ant() here
+	# ─── Main.gd's _spawn_visual_ant() handles visual_ant_count directly
 	_wander_noise           = FastNoiseLite.new()
 	_wander_noise.seed      = randi()
 	_wander_noise.frequency = noise_frequency
-
 	_return_noise           = FastNoiseLite.new()
 	_return_noise.seed      = randi()
-
 	_vbi_noise              = FastNoiseLite.new()
 	_vbi_noise.seed         = randi()
-
 	_noise_offset    = randf() * 1000.0
 	add_to_group("ants")
 	target_direction = randf() * TAU
@@ -234,6 +236,8 @@ func _process(delta: float) -> void:
 		if _food_check_timer >= FOOD_CHECK_INTERVAL:
 			_food_check_timer = 0.0
 			_check_for_food(delta)
+	if state == State.RETURNING and pheromones:
+			pheromones.deposit(global_position, 5.0)
 
 	# ── RETURNING ────────────────────────────────────────────────────────────
 	elif state == State.RETURNING:
@@ -260,6 +264,7 @@ func _process(delta: float) -> void:
 			food_delivered.emit()
 			# ─── Pay out the reward for whatever food was carried
 			GameManager.add_sucrose(_carried_reward)
+
 
 	_apply_movement(delta)
 
