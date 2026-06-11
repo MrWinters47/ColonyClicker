@@ -3,6 +3,7 @@ extends Node
 # Currency
 signal sucrose_changed(new_amount: float)
 
+signal perks_changed
 # Colony
 signal colony_loaded(colony_stats)
 signal upgrade_purchased(upgrade_id: String)
@@ -26,3 +27,8 @@ signal prestige_triggered(new_colony)
 # Game
 signal game_saved()
 signal game_loaded()
+
+# Boost
+signal boost_changed(fill: float)
+signal boost_activated()
+signal boost_ended()

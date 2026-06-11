@@ -1,5 +1,6 @@
 extends Node2D
 
+
 const AntScene        = preload("res://Scenes/MainScenes/BaseAnt.tscn")
 const MainUI          = preload("res://Scenes/MainScenes/MainUI.tscn")
 const CarpenterColony = preload("res://Data/Colonies/carpenter_ant.tres")
@@ -9,6 +10,7 @@ var colony_manager    = ColonyManager.new()
 var _rally_marker: Node2D = null
 var _overlay: ColorRect
 var _overlay_label: Label
+
 
 # ─── Auto-spawn tiers — once colony hits threshold, auto-add this batch every interval
 const SPAWN_TIERS = [
@@ -24,10 +26,9 @@ var _auto_spawn_timer: float = 0.0
 # ─── Visual ant threshold config — tune these 3 values to control pacing
 const VISUAL_ANT_COUNT: int   = 150    # max ants ever shown on screen
 const THRESHOLD_BASE: float   = 50.0  # real ant count to unlock the 1st visual ant
-const THRESHOLD_SCALE: float  = 3.0  # curve steepness — try 1.25 to 1.5
+const THRESHOLD_SCALE: float  = 2  # curve steepness — try 1.25 to 1.5
 
 var visual_thresholds: Array = []
-
 
 func _build_thresholds() -> void:
 	# ─── Generate thresholds mathematically instead of hardcoding 25 values

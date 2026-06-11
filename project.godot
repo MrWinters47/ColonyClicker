@@ -22,6 +22,7 @@ GameManager="*uid://v7ap1q8a6rpa"
 UpgradeManager="*uid://dqqne2fjiegqm"
 EnemyColonies="*uid://brtohlxrlm4h2"
 BattleSystem="*uid://6o6iy4cdov8e"
+PerkManager="*uid://xtielr4iemys"
 
 [display]
 

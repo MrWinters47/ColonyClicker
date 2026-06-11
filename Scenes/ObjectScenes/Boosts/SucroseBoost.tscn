@@ -19,12 +19,12 @@ shader_parameter/backgroundGradientOuterColour = Color(0, 0, 0, 1)
 shader_parameter/uv_scale = -0.48
 shader_parameter/uv_offset = Vector2(1.038, 1.038)
 shader_parameter/ringWidth = 0.062000002945
-shader_parameter/innerCircleRadiusOffset = -0.021999994525229993
-shader_parameter/fill_value = -0.053999955064999994
+shader_parameter/innerCircleRadiusOffset = -0.02199999452522999
+shader_parameter/fill_value = -0.05399995506499999
 shader_parameter/waveFrequency = 0.69
 shader_parameter/waveAmplitude = 0.025
-shader_parameter/waveAnimationSpeed = 1.9100000000000001
-shader_parameter/fillAnimationFrequency = 3.8449999999999998
+shader_parameter/waveAnimationSpeed = 1.91
+shader_parameter/fillAnimationFrequency = 3.845
 shader_parameter/fillAnimationAmplitude = 0.05
 shader_parameter/fillProgressAnimationFreq = 1.0
 shader_parameter/fillProgressAnimationAmp = 0.1
@@ -44,14 +44,14 @@ shader_parameter/backgroundStrength = 0.65
 [node name="Node2D" type="Node2D" unique_id=2137308716]
 
 [node name="SucroseBoostImg" type="Sprite2D" parent="." unique_id=1060165065]
-position = Vector2(2.000023, -7.6293945e-06)
-scale = Vector2(0.30656105, 0.3065611)
+position = Vector2(1.1875153, -0.80939484)
+scale = Vector2(0.10803162, 0.108031645)
 texture = ExtResource("1_uow4o")
 
 [node name="SB_SHADER" type="ColorRect" parent="." unique_id=1544406655]
 self_modulate = Color(1, 1, 1, 0.8235294)
 material = SubResource("ShaderMaterial_20vki")
-offset_left = -100.0
-offset_top = -102.0
-offset_right = 108.0
-offset_bottom = 106.0
+offset_left = -35.0
+offset_top = -36.302017
+offset_right = 38.0
+offset_bottom = 36.697983

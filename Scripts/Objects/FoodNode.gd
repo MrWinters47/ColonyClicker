@@ -1,7 +1,8 @@
 extends Node2D
 
 # ─── FOOD TYPES ───────────────────────────────────────────────────────────────
-enum FoodType { LEAF, INSECT, SUGAR_CRYSTAL, SUCROSE_DROP, MUSHROOM, SEED }
+enum FoodType { LEAF, INSECT, SUGAR_CRYSTAL, SUCROSE_DROP, MUSHROOM, SEED, ROYAL_JELLY }
+
 
 # ─── STATS PER TYPE ───────────────────────────────────────────────────────────
 const FOOD_DATA = {
@@ -11,6 +12,7 @@ const FOOD_DATA = {
 	FoodType.SUCROSE_DROP: {"reward": 10.0, "retrieve_mult": 0.4,  "bites": 2,  "label": "Sucrose Drop"},
 	FoodType.MUSHROOM:     {"reward": 1.8,  "retrieve_mult": 1.3,  "bites": 6,  "label": "Mushroom"},
 	FoodType.SEED:         {"reward": 0.8,  "retrieve_mult": 0.6,  "bites": 3,  "label": "Seed"},
+	FoodType.ROYAL_JELLY:  {"reward": 0.5,  "retrieve_mult": 2.0,  "bites": 3,  "label": "Royal Jelly", "boost": 0.15},
 }
 
 # Spawn weights — higher = more common
@@ -21,6 +23,7 @@ const SPAWN_WEIGHTS = {
 	FoodType.SUCROSE_DROP:  5,
 	FoodType.MUSHROOM:      22,
 	FoodType.SEED:          30,
+	FoodType.ROYAL_JELLY:   3,
 }
 
 # ─── STATE ────────────────────────────────────────────────────────────────────
@@ -45,8 +48,7 @@ func _ready() -> void:
 	queue_redraw()
 
 func _process(delta: float) -> void:
-	# Subtle idle animation for rare drops only
-	if food_type == FoodType.SUCROSE_DROP:
+	if food_type == FoodType.SUCROSE_DROP or food_type == FoodType.ROYAL_JELLY:
 		_noise_time += delta
 		queue_redraw()
 
@@ -81,6 +83,23 @@ func _draw() -> void:
 		FoodType.SUCROSE_DROP: _draw_sucrose_drop()
 		FoodType.MUSHROOM:     _draw_mushroom()
 		FoodType.SEED:         _draw_seed()
+		FoodType.ROYAL_JELLY:  _draw_royal_jelly()
+
+func _draw_royal_jelly() -> void:
+	# Glowing amber blob — precious and rare
+	var pulse = abs(sin(_noise_time * 3.0)) * 0.15
+	var amber = Color(1.0, 0.75 + pulse, 0.3, 0.95)
+	# Main blob — organic shape using overlapping circles
+	draw_circle(Vector2(0, 0), 10.0, amber)
+	draw_circle(Vector2(-4, -3), 7.0, amber.lightened(0.15))
+	draw_circle(Vector2(3, 2), 6.0, amber.lightened(0.1))
+	# Inner glow
+	draw_circle(Vector2(-1, -1), 4.0, Color(1.0, 0.95, 0.6, 0.8))
+	draw_circle(Vector2(0, 0), 2.0, Color(1.0, 1.0, 0.9, 0.9))
+	# Crown sparkle — so player knows this is special
+	draw_line(Vector2(0, -12), Vector2(0, -16), Color(1.0, 0.9, 0.4, 0.7 + pulse), 1.5)
+	draw_line(Vector2(-4, -10), Vector2(-6, -14), Color(1.0, 0.9, 0.4, 0.5 + pulse), 1.2)
+	draw_line(Vector2(4, -10), Vector2(6, -14), Color(1.0, 0.9, 0.4, 0.5 + pulse), 1.2)
 
 func _draw_leaf() -> void:
 	# Green diamond leaf shape with vein

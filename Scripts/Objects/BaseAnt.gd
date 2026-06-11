@@ -14,8 +14,8 @@ var state: State = State.FORAGING
 var previous_state: State = State.FORAGING
 
 var _carried_reward: float = 1.0
+var _carried_boost: float  = 0.0
 
-# ─── Food check throttle — only scan for food 10x per second not 60x
 var _food_check_timer: float = 0.0
 const FOOD_CHECK_INTERVAL: float = 0.1
 
@@ -27,7 +27,6 @@ var colony: ColonyManager = null
 @onready var pheromones = get_tree().get_first_node_in_group("pheromone_grid")
 
 func setup(colony_manager: ColonyManager) -> void:
-	# ─── Register with GameManager and pull colony stats
 	GameManager.register_ant()
 	colony = colony_manager
 	speed              = min(colony.get_stat("base_speed") * 185.0, 300.0)
@@ -36,7 +35,7 @@ func setup(colony_manager: ColonyManager) -> void:
 	_health            = colony.get_stat("base_health")
 
 # =============================================================================
-# ⚙️ TWEAK ZONE
+# TWEAK ZONE
 # =============================================================================
 var speed: float                  = 185.0
 var scurry_acceleration: float    = 5.0
@@ -98,19 +97,15 @@ var _return_noise: FastNoiseLite
 var _vbi_noise: FastNoiseLite
 
 # =============================================================================
-# OPTIMISATION — redraw throttle + off-screen culling
+# OPTIMISATION
 # =============================================================================
-var _draw_timer: float       = 0.0
-const DRAW_INTERVAL: float = 0.1  # 10fps redraws
+var _draw_timer: float     = 0.0
+const DRAW_INTERVAL: float = 0.1
 
 # =============================================================================
 # READY
 # =============================================================================
-
-
 func _ready() -> void:
-	# ─── DO NOT call GameManager.register_ant() here
-	# ─── Main.gd's _spawn_visual_ant() handles visual_ant_count directly
 	_wander_noise           = FastNoiseLite.new()
 	_wander_noise.seed      = randi()
 	_wander_noise.frequency = noise_frequency
@@ -127,20 +122,17 @@ func _ready() -> void:
 # COMBAT
 # =============================================================================
 func take_damage(amount: float) -> void:
-	# ─── Reduce health by damage minus defense, minimum 1
 	var actual = max(amount - _defense, 1.0)
 	_health -= actual
 	if _health <= 0:
 		die()
 
 func die() -> void:
-	# ─── Unregister from GameManager and clean up
 	GameManager.unregister_ant()
 	EventBus.ant_died.emit(self)
 	queue_free()
 
 func command_to_pos(pos: Vector2) -> void:
-	# ─── Rally this ant to a clicked world position
 	_rally_point = pos
 	_is_rallying = true
 	_rally_timer = 3.5
@@ -151,7 +143,6 @@ func command_to_pos(pos: Vector2) -> void:
 func _process(delta: float) -> void:
 	_noise_time += delta
 
-	# ─── Throttled redraw — only if on screen to save GPU
 	_draw_timer += delta
 	if _draw_timer >= DRAW_INTERVAL:
 		_draw_timer = 0.0
@@ -191,22 +182,22 @@ func _process(delta: float) -> void:
 		var t           = clamp(1.0 - (_deposit_timer / deposit_time), 0.0, 1.0)
 		scale           = Vector2.ONE * (1.0 - t * 0.85)
 		if _deposit_timer <= 0.0:
-			state      = State.FORAGING
-			scale      = Vector2.ONE
-			position   = GameManager.colony_position + Vector2(randf_range(-30, 30), randf_range(-10, 10))
+			state    = State.FORAGING
+			scale    = Vector2.ONE
+			position = GameManager.colony_position + Vector2(randf_range(-30, 30), randf_range(-10, 10))
 		_apply_movement(delta)
 		return
 
 	_is_eating = false
 	_apply_vbi(delta)
 
-	# ─── Random pause for natural erratic behaviour
+	# ─── Random pause
 	if randf() < erraticness * 0.008 and not _is_rallying:
 		previous_state = state
 		state          = State.PAUSED
 		_pause_timer   = randf_range(0.05, 0.1 + erraticness * 0.8)
 
-	# ─── Walk animation cycle
+	# ─── Walk animation
 	if _current_speed > 5.0:
 		var stride_drift = 1.0 + _vbi_noise.get_noise_1d(_noise_time * 0.5 + _noise_offset + 300.0) * 0.4 * erraticness
 		_walk_phase     += delta * walk_cycle_speed * (_current_speed / speed) * stride_drift
@@ -231,12 +222,12 @@ func _process(delta: float) -> void:
 			target_direction += noise_val * wander_strength * delta
 			rotation          = lerp_angle(rotation, target_direction, turn_speed_forage * delta)
 
-		# ─── Throttled food check — not every frame
 		_food_check_timer += delta
 		if _food_check_timer >= FOOD_CHECK_INTERVAL:
 			_food_check_timer = 0.0
 			_check_for_food(delta)
-	if state == State.RETURNING and pheromones:
+
+		if pheromones:
 			pheromones.deposit(global_position, 5.0)
 
 	# ── RETURNING ────────────────────────────────────────────────────────────
@@ -245,26 +236,26 @@ func _process(delta: float) -> void:
 		_is_rallying   = false
 		_current_speed = lerp(_current_speed, speed * 1.2, scurry_acceleration * delta)
 
-		var colony_pos     = GameManager.colony_position
-		var dist_to_colony = position.distance_to(colony_pos)
-		var wiggle_scale   = clamp(dist_to_colony / 300.0, 0.0, 1.0)
+		var colony_pos      = GameManager.colony_position
+		var dist_to_colony  = position.distance_to(colony_pos)
+		var wiggle_scale    = clamp(dist_to_colony / 300.0, 0.0, 1.0)
 		var angle_to_colony = position.angle_to_point(colony_pos)
-		var wiggle         = _return_noise.get_noise_1d(_noise_time + _noise_offset) * return_sass_strength * wiggle_scale
-		rotation           = lerp_angle(rotation, angle_to_colony + wiggle, turn_speed_return * delta)
+		var wiggle          = _return_noise.get_noise_1d(_noise_time + _noise_offset) * return_sass_strength * wiggle_scale
+		rotation            = lerp_angle(rotation, angle_to_colony + wiggle, turn_speed_return * delta)
 
 		drop_timer += delta
 		if drop_timer >= pheromone_drop_interval:
 			drop_timer = 0.0
-			# PheromoneSystem.add_scent(global_position) ← hook in when ready
 
 		if dist_to_colony < colony_arrive_radius:
 			state          = State.DEPOSITING
 			_deposit_timer = deposit_time
 			_carrying_food = false
 			food_delivered.emit()
-			# ─── Pay out the reward for whatever food was carried
 			GameManager.add_sucrose(_carried_reward)
-
+			if _carried_boost > 0.0:
+				GameManager.add_boost(_carried_boost)
+				_carried_boost = 0.0
 
 	_apply_movement(delta)
 
@@ -272,7 +263,6 @@ func _process(delta: float) -> void:
 # MOVEMENT
 # =============================================================================
 func _apply_vbi(delta: float) -> void:
-	# ─── Velocity Based Irregularity — makes movement feel organic
 	var flutter      = _vbi_noise.get_noise_1d(_noise_time * 3.0 + _noise_offset) * 28.0 * erraticness
 	_current_speed   = clamp(_current_speed + flutter * delta, speed * 0.5, speed * 2.2)
 	var drift        = _vbi_noise.get_noise_1d(_noise_time * 1.3 + _noise_offset + 100.0) * 0.25 * erraticness
@@ -287,7 +277,6 @@ func _apply_vbi(delta: float) -> void:
 	rotation   += jitter
 
 func _apply_movement(delta: float) -> void:
-	# ─── Move forward and bounce off world edges
 	_bob_y         = sin(_walk_phase * body_bob_speed) * body_bob_amount
 	position      += Vector2.RIGHT.rotated(rotation) * _current_speed * delta
 	_wall_cooldown -= delta
@@ -305,10 +294,8 @@ func _apply_movement(delta: float) -> void:
 		position.y = clamp(position.y, 21.0, WORLD_H - 21.0)
 
 func _check_for_food(delta: float) -> void:
-	# ─── Use cached food list from GameManager — no expensive tree scan
 	var closest_food: Node2D = null
 	var closest_dist: float  = food_awareness_radius
-
 	for food in GameManager.food_nodes:
 		if not is_instance_valid(food):
 			continue
@@ -316,20 +303,17 @@ func _check_for_food(delta: float) -> void:
 		if dist < closest_dist:
 			closest_dist = dist
 			closest_food = food
-
 	if closest_food == null:
 		return
-
 	if closest_dist < food_detect_radius:
 		_target_food = closest_food
 		if not is_instance_valid(_target_food):
 			return
-		# ─── Retrieve time scaled by food type difficulty
 		_eat_timer      = randf_range(retrieve_time * 0.8, retrieve_time * 1.3) * _target_food.retrieve_time_mult
 		_carried_reward = _target_food.sucrose_reward
+		_carried_boost  = _target_food.boost_value
 		state           = State.EATING
 		return
-
 	# ─── Pull ant toward food as it gets closer
 	var pull_strength = 1.0 - (closest_dist / food_awareness_radius)
 	var angle_to_food = global_position.angle_to_point(closest_food.global_position)
@@ -383,13 +367,11 @@ func _draw() -> void:
 	draw_line(Vector2(14, 0) + bob, Vector2(19, -jaw_open) + bob, bc.lightened(0.2), 1.5)
 	draw_line(Vector2(14, 0) + bob, Vector2(19, jaw_open) + bob,  bc.lightened(0.2), 1.5)
 
-	# ─── Show food blob when carrying
 	if _carrying_food:
 		draw_circle(Vector2(-12, -6) + bob,   3.5, Color(0.2, 0.75, 0.25, 0.95))
 		draw_circle(Vector2(-11, -7.5) + bob, 1.2, Color(0.5, 1.0, 0.5, 0.7))
 
 func _draw_leg(attach: Vector2, tip_dir: Vector2, phase: float, color: Color) -> void:
-	# ─── Two-segment leg with knee
 	var tip  = tip_dir + Vector2(phase, 0)
 	var knee = (attach + tip) / 2.0 + Vector2(0, tip_dir.y * 0.25)
 	draw_line(attach, knee, color, 1.2)

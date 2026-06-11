@@ -87,7 +87,7 @@ _data = {
 &"SWOOP": SubResource("Animation_xuciq")
 }
 
-[node name="Node2D" type="Node2D" unique_id=1348397101]
+[node name="ElementPanel" type="Node2D" unique_id=1348397101]
 script = ExtResource("1_fwrxo")
 
 [node name="Panel" type="Panel" parent="." unique_id=1629082757]

@@ -216,6 +216,7 @@ func _finalize() -> void:
 		"max_enemy":   enemy_state.get("max_force", 0),
 	})
 
+
 # =============================================================================
 # CORE COMBAT MATH — unchanged from original
 # =============================================================================
@@ -233,14 +234,14 @@ func _build_player_dict() -> Dictionary:
 		"name":         c.colony_name,
 		"workers":      int(max(GameManager.ant_count, 5) * ANT_FORCE_MULT),
 		"soldiers":     0,
-		"worker_dmg":   c.base_attack,
-		"soldier_dmg":  c.base_attack * 2.0,
+		"worker_dmg":  c.base_attack * PerkManager.get_multiplier(PerkManager.STAT_BATTLE_ATTACK),
+		"soldier_dmg": c.base_attack * 2.0 * PerkManager.get_multiplier(PerkManager.STAT_BATTLE_ATTACK),
 		"worker_hp":    c.base_health * 0.5,
 		"soldier_hp":   c.base_health,
 		"speed":        c.base_speed,
 		"aggression":   c.aggression,
 		"cohesion":     c.cohesion,
-		"armor":        c.base_defense,
+		"armor":       c.base_defense * PerkManager.get_multiplier(PerkManager.STAT_BATTLE_DEFENSE),
 		"venom":        c.venom,
 		"queen_buff":   c.queen_buff,
 		"panic_resist": c.panic_resist,

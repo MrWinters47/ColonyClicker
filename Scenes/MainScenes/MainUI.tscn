@@ -21,6 +21,7 @@
 [ext_resource type="AudioStream" uid="uid://bijroxdvmvvxx" path="res://Assets/Audio/277033__headphaze__ui-completed-status-alert-notification-sfx001.wav" id="17_icmca"]
 [ext_resource type="Shader" uid="uid://bbh7pv88xaofj" path="res://Scenes/MainScenes/MainUI.gdshader" id="18_dws1n"]
 [ext_resource type="PackedScene" uid="uid://bkcn480p8tval" path="res://Scenes/ObjectScenes/Boosts/SucroseBoost.tscn" id="21_db3p1"]
+[ext_resource type="PackedScene" uid="uid://hgpk76n0px7b" path="res://Scenes/ObjectScenes/ElementPanel.tscn" id="22_7qi22"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icmca"]
 bg_color = Color(0.47058824, 0.6745098, 0.21176471, 0.69803923)
@@ -253,4 +254,14 @@ mouse_filter = 2
 color = Color(0, 0, 0, 1)
 
 [node name="Node2D" parent="." unique_id=2137308716 instance=ExtResource("21_db3p1")]
-position = Vector2(587, 664)
+position = Vector2(61, 233)
+
+[node name="PerksButton" type="Button" parent="." unique_id=1538256344]
+offset_left = 14.0
+offset_top = 362.0
+offset_right = 133.0
+offset_bottom = 461.0
+text = "PERKS"
+
+[node name="ElementPanel" parent="." unique_id=1348397101 instance=ExtResource("22_7qi22")]
+position = Vector2(10, 7)

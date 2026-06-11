@@ -28,3 +28,8 @@ func get_stat(stat_name: String) -> float:
 			base *= perk.multiplier
 
 	return base
+
+
+func reset() -> void:
+	active_perks.clear()
+	UpgradeManager.reset_levels()

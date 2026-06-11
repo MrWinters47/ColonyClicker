@@ -12,6 +12,10 @@ extends CanvasLayer
 @onready var battle_panel   = $BattleScene
 @onready var battle_button  = $BattleButton
 
+@onready var perk_panel = $ElementPanel
+@onready var perks_button = $PerksButton
+
+
 
 # =============================================================================
 # SPAWN SETTINGS
@@ -25,6 +29,7 @@ var _spawning: bool = false
 
 # Banks fractional bonus ants so small multiplier upgrades are never wasted
 var _spawn_remainder: float = 0.0
+
 
 # =============================================================================
 # READY — wire up all signals and set initial state
@@ -51,6 +56,7 @@ func _ready() -> void:
 	spawn_progress.max_value = 100
 	sucrose_label.text       = "Sucrose: 0"
 	_update_ant_label()
+	perks_button.pressed.connect(_on_perks_btn_pressed)
 
 # =============================================================================
 # PANEL TOGGLES
@@ -189,3 +195,19 @@ func _apply_upgrade(id: String) -> void:
 		"bigger_colony":
 			GameManager.ant_count += 20
 			EventBus.ant_spawned.emit(null)
+
+
+var _perks_open: bool = false
+
+func _on_perks_btn_pressed() -> void:
+	if _perks_open:
+		_perks_open = false
+		perk_panel.close_panel()
+		await get_tree().create_timer(1).timeout
+		perk_panel.hide()
+	else:
+		upgrade_panel.hide()
+		battle_panel.hide()
+		perk_panel.show()
+		perk_panel.open_panel()
+		_perks_open = true
