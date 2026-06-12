@@ -30,8 +30,9 @@ const SPAWN_WEIGHTS = {
 var food_type: FoodType = FoodType.LEAF
 var sucrose_reward: float = 1.0
 var retrieve_time_mult: float = 1.0
+var boost_value: float = 0.0          # ← ADD THIS LINE
 var _bites_remaining: int = 5
-var _noise_time: float = 0.0  # for subtle animation
+var _noise_time: float = 0.0
 
 func _ready() -> void:
 	add_to_group("foods")
@@ -46,6 +47,10 @@ func _ready() -> void:
 	rotation = randf() * TAU
 	GameManager.register_food(self)
 	queue_redraw()
+	sucrose_reward     = data.reward
+	retrieve_time_mult = data.retrieve_mult
+	_bites_remaining   = data.bites
+	boost_value        = data.get("boost", 0.0)    # ← ADD THIS LINE
 
 func _process(delta: float) -> void:
 	if food_type == FoodType.SUCROSE_DROP or food_type == FoodType.ROYAL_JELLY:
