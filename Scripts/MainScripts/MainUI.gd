@@ -13,17 +13,32 @@ extends CanvasLayer
 @onready var battle_button  = $BattleButton
 @onready var perk_panel     = $ElementPanel
 @onready var perks_button   = $PerksButton
+@onready var battle_meter   = $TopBar/Control/BattleMeterProgress
 
 # =============================================================================
 # SPAWN SETTINGS
 # =============================================================================
-const SPAWN_DURATION: float = 1.0
+const SPAWN_TIME_BASE: float = 2.0
+const SPAWN_TIME_MIN:  float = 0.1
 var _spawning: bool = false
 @export var base_spawn: int = 1
 var _spawn_remainder: float = 0.0
 
-# ─── Track perk panel state for the swoop animation
 var _perks_open: bool = false
+var _prev_osa: int = 0
+
+# =============================================================================
+# ⚙️ BATTLE READINESS — the ONE knob to tune
+# =============================================================================
+# Threshold = current enemy's total force × this ratio (floored at MIN).
+# Fire Ant has 1000 force → 0.15 means you need 150 colony ants to fight it.
+#   • Lower  = battles unlock SOONER
+#   • Higher = you must build a bigger army first
+const BATTLE_READINESS_RATIO: float = 0.15
+const MIN_BATTLE_THRESHOLD:   float = 30.0
+
+var _meter_target: float = 0.0   # 0..max_value; the bar lerps toward this
+var _was_ready: bool     = false # so we flash the unlock only ONCE
 
 # =============================================================================
 # READY
@@ -40,20 +55,29 @@ func _ready() -> void:
 	battle_button.pressed.connect(_on_battle_btn_pressed)
 	perks_button.pressed.connect(_on_perks_btn_pressed)
 
-	# ─── All panels closed at start
 	upgrade_panel.hide()
 	battle_panel.hide()
 	perk_panel.hide()
 	spawn_progress.value     = 0
 	spawn_progress.max_value = 100
 	sucrose_label.text       = "Sucrose: 0"
+	_prev_osa = GameManager.visual_ant_count
 	_update_ant_label()
+
+	_refresh_battle_state()
+	battle_meter.value = _meter_target
+	EventBus.game_loaded.connect(_update_ant_label)
+
+# =============================================================================
+# PROCESS — glide the meter toward its target (cheap, smooth, no tween stacking)
+# =============================================================================
+func _process(delta: float) -> void:
+	battle_meter.value = lerp(battle_meter.value, _meter_target, 8.0 * delta)
 
 # =============================================================================
 # PANEL MANAGEMENT — single source of truth
 # =============================================================================
 func _close_all_panels() -> void:
-	# ─── Hide every panel before opening a new one — prevents stacking
 	if upgrade_panel.visible:
 		upgrade_panel.hide()
 	if battle_panel.visible:
@@ -62,7 +86,6 @@ func _close_all_panels() -> void:
 		_close_perks_immediate()
 
 func _close_perks_immediate() -> void:
-	# ─── Used when forcibly closing (e.g. opening another panel)
 	_perks_open = false
 	if perk_panel.has_method("close_panel"):
 		perk_panel.close_panel()
@@ -79,6 +102,7 @@ func _on_upgrade_btn_pressed() -> void:
 		upgrade_panel.show()
 
 func _on_battle_btn_pressed() -> void:
+	# ─── Button is disabled until the meter's full, so this only fires when ready
 	if battle_panel.visible:
 		battle_panel.hide()
 	else:
@@ -88,13 +112,15 @@ func _on_battle_btn_pressed() -> void:
 func _on_perks_btn_pressed() -> void:
 	if _perks_open:
 		_perks_open = false
-		perk_panel.close_panel()
+		if perk_panel.has_method("close_panel"):   # ★ NEW guard
+			perk_panel.close_panel()
 		await get_tree().create_timer(0.5).timeout
 		perk_panel.hide()
 	else:
 		_close_all_panels()
 		perk_panel.show()
-		perk_panel.open_panel()
+		if perk_panel.has_method("open_panel"):     # ★ NEW guard
+			perk_panel.open_panel()
 		_perks_open = true
 
 # =============================================================================
@@ -106,11 +132,18 @@ func _on_spawn_pressed() -> void:
 	_spawning             = true
 	spawn_button.disabled = true
 	var tween = create_tween()
-	tween.tween_property(spawn_progress, "value", 100.0, SPAWN_DURATION)
+	tween.tween_property(spawn_progress, "value", 100.0, _current_spawn_time())
 	tween.finished.connect(_on_spawn_complete)
 
+func _current_spawn_time() -> float:
+	var def = UpgradeManager.get_def("faster_hatchery")
+	if not def:
+		return SPAWN_TIME_BASE
+	var lvl  = UpgradeManager.get_level("faster_hatchery")
+	var maxl = max(def.max_level, 1)
+	return lerp(SPAWN_TIME_BASE, SPAWN_TIME_MIN, float(lvl) / float(maxl))
+
 func _on_spawn_complete() -> void:
-	# ─── ONE clean spawn — was triplicated before, every fire stacked 3 spawns
 	var reward: int = base_spawn
 
 	_spawn_remainder += base_spawn * GameManager.spawn_multiplier
@@ -141,9 +174,68 @@ func _on_sucrose_changed(amount: float) -> void:
 
 func _update_ant_label() -> void:
 	var colony = GameManager.active_colony
-	var name   = colony.colony_name if colony else "Colony"
-	ant_label.text = name + " — Colony: " + str(GameManager.ant_count) \
-					+ " (" + str(GameManager.visual_ant_count) + " on screen)"
+	var cname  = colony.colony_name if colony else "Colony"
+	ant_label.text = "%s\nColony %s  •  %d on the surface" % [
+		cname,
+		_abbrev(GameManager.ant_count),
+		GameManager.visual_ant_count,
+	]
+
+	if GameManager.visual_ant_count > _prev_osa:
+		_flash_osa()
+	_prev_osa = GameManager.visual_ant_count
+
+	# ─── Colony changed → re-evaluate battle readiness
+	_refresh_battle_state()
+
+func _flash_osa() -> void:
+	ant_label.modulate = Color(1.4, 1.2, 0.4)
+	var t = create_tween()
+	t.tween_property(ant_label, "modulate", Color(1, 1, 1, 1), 0.4)
+
+func _abbrev(n: int) -> String:
+	if n < 1000:
+		return str(n)
+	var f = float(n)
+	var units = ["K", "M", "B", "T"]
+	var idx = -1
+	while f >= 1000.0 and idx < units.size() - 1:
+		f /= 1000.0
+		idx += 1
+	var s = "%.2f" % f
+	s = s.rstrip("0").rstrip(".")
+	return s + units[idx]
+
+# =============================================================================
+# BATTLE METER + LOCK
+# =============================================================================
+func _battle_threshold() -> float:
+	# ─── How big your colony must be to fight the CURRENT enemy
+	var enemy = EnemyColonies.get_current()
+	var force = float(enemy.workers + enemy.soldiers)
+	return max(force * BATTLE_READINESS_RATIO, MIN_BATTLE_THRESHOLD)
+
+func _refresh_battle_state() -> void:
+	var threshold = _battle_threshold()
+	var ready     = GameManager.ant_count >= threshold
+
+	# ─── Set the bar's target (0..max_value) — _process glides to it
+	var pct = clamp(float(GameManager.ant_count) / threshold, 0.0, 1.0)
+	_meter_target = pct * battle_meter.max_value
+
+	# ─── Lock / unlock the battle button
+	battle_button.disabled = not ready
+	battle_button.modulate = Color(1, 1, 1, 1) if ready else Color(0.55, 0.55, 0.55, 1.0)
+
+	# ─── Flash gold the moment it first unlocks — make it an EVENT
+	if ready and not _was_ready:
+		_flash_battle_ready()
+	_was_ready = ready
+
+func _flash_battle_ready() -> void:
+	battle_button.modulate = Color(1.6, 1.4, 0.5)
+	var t = create_tween()
+	t.tween_property(battle_button, "modulate", Color(1, 1, 1, 1), 0.5)
 
 # =============================================================================
 # UPGRADE EFFECTS
@@ -159,8 +251,6 @@ func _apply_upgrade(id: String) -> void:
 		"sprinter_genes":
 			for ant in get_tree().get_nodes_in_group("ants"):
 				ant.speed = min(ant.speed * 1.05, 350.0)
-		"faster_hatchery":
-			GameManager.spawn_multiplier += 0.05
 		"royal_pheromones":
 			GameManager.spawn_multiplier += 0.10
 		"better_nose":
@@ -176,10 +266,9 @@ func _apply_upgrade(id: String) -> void:
 			EventBus.ant_spawned.emit(null)
 
 # =============================================================================
-# ANIMATION HOOKS — only fire if the buttons are still wired in the scene
+# ANIMATION HOOKS
 # =============================================================================
 func _on_battle_button_pressed() -> void:
-	# ─── If you've wired an AnimationPlayer for fullscreen battle, this plays it
 	if has_node("AnimationPlayer"):
 		$AnimationPlayer.play("fullscreen_for_battle")
 

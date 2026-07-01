@@ -188,3 +188,10 @@ func build_colony_stats(q: Dictionary) -> ColonyStats:
 	s.panic_resist     = q.panic_resist
 	s.queen_buff       = q.queen_buff
 	return s
+
+# ─── SAVE: which queen you're up to
+func save_data() -> Dictionary:
+	return {"current_index": current_index}
+
+func load_data(d: Dictionary) -> void:
+	current_index = clamp(int(d.get("current_index", 0)), 0, queens.size() - 1)

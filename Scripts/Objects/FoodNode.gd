@@ -6,13 +6,13 @@ enum FoodType { LEAF, INSECT, SUGAR_CRYSTAL, SUCROSE_DROP, MUSHROOM, SEED, ROYAL
 
 # ─── STATS PER TYPE ───────────────────────────────────────────────────────────
 const FOOD_DATA = {
-	FoodType.LEAF:         {"reward": 1.0,  "retrieve_mult": 1.0,  "bites": 5,  "label": "Leaf"},
+	FoodType.LEAF:         {"reward": 1.5,  "retrieve_mult": 1.0,  "bites": 5,  "label": "Leaf"},
 	FoodType.INSECT:       {"reward": 2.5,  "retrieve_mult": 1.8,  "bites": 8,  "label": "Insect"},
 	FoodType.SUGAR_CRYSTAL:{"reward": 3.5,  "retrieve_mult": 0.8,  "bites": 4,  "label": "Sugar Crystal"},
 	FoodType.SUCROSE_DROP: {"reward": 10.0, "retrieve_mult": 0.4,  "bites": 2,  "label": "Sucrose Drop"},
-	FoodType.MUSHROOM:     {"reward": 1.8,  "retrieve_mult": 1.3,  "bites": 6,  "label": "Mushroom"},
-	FoodType.SEED:         {"reward": 0.8,  "retrieve_mult": 0.6,  "bites": 3,  "label": "Seed"},
-	FoodType.ROYAL_JELLY:  {"reward": 0.5,  "retrieve_mult": 2.0,  "bites": 3,  "label": "Royal Jelly", "boost": 0.15},
+	FoodType.MUSHROOM:     {"reward": 2.8,  "retrieve_mult": 1.3,  "bites": 6,  "label": "Mushroom"},
+	FoodType.SEED:         {"reward": 1,  "retrieve_mult": 0.6,  "bites": 3,  "label": "Seed"},
+	FoodType.ROYAL_JELLY:  {"reward": 3.5,  "retrieve_mult": 2.0,  "bites": 3,  "label": "Royal Jelly", "boost": 0.15},
 }
 
 # Spawn weights — higher = more common
@@ -20,7 +20,7 @@ const SPAWN_WEIGHTS = {
 	FoodType.LEAF:          40,
 	FoodType.INSECT:        25,
 	FoodType.SUGAR_CRYSTAL: 18,
-	FoodType.SUCROSE_DROP:  5,
+	FoodType.SUCROSE_DROP:  90,
 	FoodType.MUSHROOM:      22,
 	FoodType.SEED:          30,
 	FoodType.ROYAL_JELLY:   3,

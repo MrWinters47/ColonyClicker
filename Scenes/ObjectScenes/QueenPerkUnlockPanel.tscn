@@ -1,0 +1,128 @@
+[gd_scene format=3 uid="uid://cf5uuhitaunjv"]
+
+[ext_resource type="Texture2D" uid="uid://du7fgf7meqmoe" path="res://Assets/Art/unlock_panel.png" id="1_00vf6"]
+[ext_resource type="Theme" uid="uid://cwopqjivlx3ia" path="res://Assets/Themes/queen_unlock.tres" id="2_4tftc"]
+[ext_resource type="FontFile" uid="uid://c5fapwp3windo" path="res://Assets/Fonts/Jenko-DEMO.ttf" id="3_i08yf"]
+
+[sub_resource type="Theme" id="Theme_jqip6"]
+default_font = ExtResource("3_i08yf")
+
+[sub_resource type="Theme" id="Theme_klv4s"]
+default_font = ExtResource("3_i08yf")
+
+[sub_resource type="Theme" id="Theme_ecnpr"]
+default_font = ExtResource("3_i08yf")
+
+[node name="Node2D" type="Node2D" unique_id=2123245793]
+
+[node name="UnlockPanel" type="Sprite2D" parent="." unique_id=1143169344]
+position = Vector2(1, 2)
+texture = ExtResource("1_00vf6")
+
+[node name="Control" type="Control" parent="UnlockPanel" unique_id=7673731]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -503.0
+offset_top = -631.5
+offset_right = -503.0
+offset_bottom = -631.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="icon_sprite" type="Sprite2D" parent="UnlockPanel/Control" unique_id=1380117951]
+position = Vector2(503, 469.5)
+
+[node name="title_label" type="Label" parent="UnlockPanel/Control" unique_id=1390374361]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -485.0
+offset_top = 22.5
+offset_right = 479.0
+offset_bottom = 185.5
+grow_horizontal = 2
+theme = ExtResource("2_4tftc")
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 82
+text = "NEW QUEEN PERK UNLOCKED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="perk_name_label" type="Label" parent="UnlockPanel/Control" unique_id=296963399]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -485.0
+offset_top = 190.5
+offset_right = 479.0
+offset_bottom = 353.5
+grow_horizontal = 2
+theme = SubResource("Theme_jqip6")
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 57
+text = "THERMAL INCUBATOR"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="subtitle_label" type="Label" parent="UnlockPanel/Control" unique_id=2128660306]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -485.0
+offset_top = 246.5
+offset_right = 479.0
+offset_bottom = 409.5
+grow_horizontal = 2
+theme = SubResource("Theme_klv4s")
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 43
+text = "Fire Ant Mastery"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="lore_label" type="Label" parent="UnlockPanel/Control" unique_id=1226811124]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -485.0
+offset_top = 559.5
+offset_right = 479.0
+offset_bottom = 845.5
+grow_horizontal = 2
+theme = SubResource("Theme_ecnpr")
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 50
+text = "Fire ants meticulously regulate mound temperatures to accelerate brood development. Your hatchery now operates in overdrive."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+clip_text = true
+
+[node name="effect_label" type="Label" parent="UnlockPanel/Control" unique_id=414679663]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -485.0
+offset_top = 855.5
+offset_right = 479.0
+offset_bottom = 1190.5
+grow_horizontal = 2
+theme = SubResource("Theme_ecnpr")
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 50
+text = "Spawn Hatch Timer: 25% Faster"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+clip_text = true

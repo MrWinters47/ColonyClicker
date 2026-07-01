@@ -37,13 +37,13 @@ func setup(colony_manager: ColonyManager) -> void:
 # =============================================================================
 # TWEAK ZONE
 # =============================================================================
-var speed: float                  = 185.0
-var scurry_acceleration: float    = 5.0
+var speed: float                  = 5
+var scurry_acceleration: float    = 1.0
 var erraticness: float            = 0.5
 var retrieve_time: float          = 4.2
 var deposit_time: float           = 1.5
 
-var return_sass_strength: float   = 2.6
+var return_sass_strength: float   = 0.8
 var return_sass_frequency: float  = 0.8
 var turn_speed_forage: float      = 4.0
 var turn_speed_return: float      = 10.0
@@ -325,9 +325,12 @@ func _check_for_food(delta: float) -> void:
 # DRAWING
 # =============================================================================
 func _draw() -> void:
-	var eat_pulse: float  = (sin(_noise_time * 6.0) * 0.5 + 0.5) * 0.7
+	# ── LOD: below this many ants we show the pretty detail; above it we strip it
+	var detail_limit := 80
+	var detailed := GameManager.visual_ant_count <= detail_limit
+
 	var carry_lerp: float = 0.35 if _carrying_food else 0.0
-	var eat_lerp: float   = eat_pulse if _is_eating else 0.0
+	var eat_lerp: float   = (sin(_noise_time * 6.0) * 0.5 + 0.5) * 0.7 if _is_eating else 0.0
 	var bc = ant_color.lerp(Color(1.0, 0.78, 0.1, 1.0), eat_lerp).lerp(carrying_color, carry_lerp)
 	var lc = leg_color.lerp(carrying_color, 0.2 if _carrying_food else 0.0)
 	var bob = Vector2(0, _bob_y)
@@ -335,44 +338,53 @@ func _draw() -> void:
 	var pa = sin(_walk_phase) * leg_swing_amount
 	var pb = -sin(_walk_phase) * leg_swing_amount
 
-	_draw_leg(Vector2(2, 0) + bob,  Vector2(8, -9),  pa, lc)
-	_draw_leg(Vector2(2, 0) + bob,  Vector2(8, 9),   pb, lc)
-	_draw_leg(Vector2(-3, 0) + bob, Vector2(2, -11), pb, lc)
-	_draw_leg(Vector2(-3, 0) + bob, Vector2(2, 11),  pa, lc)
-	_draw_leg(Vector2(-8, 0) + bob, Vector2(-4, -9), pa, lc)
-	_draw_leg(Vector2(-8, 0) + bob, Vector2(-4, 9),  pb, lc)
-
-	draw_circle(Vector2(-12, 0) + bob,     8.0, bc)
-	draw_circle(Vector2(-14, -3) + bob,    2.5, bc.lightened(0.22))
-	draw_circle(Vector2(-4, 0) + bob,      2.2, bc.darkened(0.15))
-	draw_circle(Vector2(0, 0) + bob,       5.5, bc)
-	draw_circle(Vector2(-1, -2) + bob,     1.5, bc.lightened(0.15))
-	draw_circle(Vector2(10, 0) + bob,      5.0, bc)
-	draw_circle(Vector2(12, -2.5) + bob,   1.2, eye_color)
-	draw_circle(Vector2(12, 2.5) + bob,    1.2, eye_color)
-	draw_circle(Vector2(12.4, -2.8) + bob, 0.4, Color(1.0, 0.086, 1.0, 0.702))
-	draw_circle(Vector2(12.4, 2.2) + bob,  0.4, Color(1.0, 0.071, 1.0, 0.702))
+	# ── ALL LINES IN ONE BATCH ────────────────────────────────────────────────
+	# Legs (+ antennae when detailed) are one colour → one draw call, not ~16.
+	# draw_multiline reads points in PAIRS: (p0,p1) is one segment, (p2,p3) next.
+	var lines := PackedVector2Array()
+	lines.append_array(_leg_points(Vector2(2, 0) + bob,  Vector2(8, -9),  pa))
+	lines.append_array(_leg_points(Vector2(2, 0) + bob,  Vector2(8, 9),   pb))
+	lines.append_array(_leg_points(Vector2(-3, 0) + bob, Vector2(2, -11), pb))
+	lines.append_array(_leg_points(Vector2(-3, 0) + bob, Vector2(2, 11),  pa))
+	lines.append_array(_leg_points(Vector2(-8, 0) + bob, Vector2(-4, -9), pa))
+	lines.append_array(_leg_points(Vector2(-8, 0) + bob, Vector2(-4, 9),  pb))
 
 	var sway: float = sin(_walk_phase * 0.5) * 3.0
 	var ant_base    = Vector2(13, 0) + bob
+	if detailed:
+		lines.append(ant_base);                lines.append(Vector2(19, -8 + sway))
+		lines.append(Vector2(19, -8 + sway));  lines.append(Vector2(24, -13 + sway * 1.5))
+		lines.append(ant_base);                lines.append(Vector2(19, 8 - sway))
+		lines.append(Vector2(19, 8 - sway));   lines.append(Vector2(24, 13 - sway * 1.5))
 
-	draw_line(ant_base, Vector2(19, -8 + sway), lc, 1.5)
-	draw_line(Vector2(19, -8 + sway), Vector2(24, -13 + sway * 1.5), lc, 1.2)
-	draw_circle(Vector2(24, -13 + sway * 1.5), 1.4, lc)
-	draw_line(ant_base, Vector2(19, 8 - sway), lc, 1.5)
-	draw_line(Vector2(19, 8 - sway), Vector2(24, 13 - sway * 1.5), lc, 1.2)
-	draw_circle(Vector2(24, 13 - sway * 1.5), 1.4, lc)
+	draw_multiline(lines, lc, 1.2)  # set width to -1 for the cheapest thin-line mode
 
-	var jaw_open: float = 3.0 if state == State.FORAGING else 1.0
-	draw_line(Vector2(14, 0) + bob, Vector2(19, -jaw_open) + bob, bc.lightened(0.2), 1.5)
-	draw_line(Vector2(14, 0) + bob, Vector2(19, jaw_open) + bob,  bc.lightened(0.2), 1.5)
+	# ── BODY — circles kept for the rounded look, trimmed to essentials ─────────
+	draw_circle(Vector2(-12, 0) + bob, 8.0, bc)                 # abdomen
+	draw_circle(Vector2(-4, 0) + bob,  2.2, bc.darkened(0.15))  # waist
+	draw_circle(Vector2(0, 0) + bob,   5.5, bc)                 # thorax
+	draw_circle(Vector2(10, 0) + bob,  5.0, bc)                 # head
 
+	if detailed:
+		# Highlights + eyes + antenna tips — invisible at small scale / high counts
+		draw_circle(Vector2(-14, -3) + bob, 2.5, bc.lightened(0.22))
+		draw_circle(Vector2(-1, -2) + bob,  1.5, bc.lightened(0.15))
+		draw_circle(Vector2(12, -2.5) + bob, 1.2, eye_color)
+		draw_circle(Vector2(12, 2.5) + bob,  1.2, eye_color)
+		draw_circle(Vector2(24, -13 + sway * 1.5), 1.4, lc)
+		draw_circle(Vector2(24, 13 - sway * 1.5),  1.4, lc)
+		var jaw_open: float = 3.0 if state == State.FORAGING else 1.0
+		draw_line(Vector2(14, 0) + bob, Vector2(19, -jaw_open) + bob, bc.lightened(0.2), 1.5)
+		draw_line(Vector2(14, 0) + bob, Vector2(19, jaw_open) + bob,  bc.lightened(0.2), 1.5)
+
+	# ── Carried food blob ───────────────────────────────────────────────────────
 	if _carrying_food:
-		draw_circle(Vector2(-12, -6) + bob,   3.5, Color(0.2, 0.75, 0.25, 0.95))
-		draw_circle(Vector2(-11, -7.5) + bob, 1.2, Color(0.5, 1.0, 0.5, 0.7))
+		draw_circle(Vector2(-12, -6) + bob, 3.5, Color(0.2, 0.75, 0.25, 0.95))
+		if detailed:
+			draw_circle(Vector2(-11, -7.5) + bob, 1.2, Color(0.5, 1.0, 0.5, 0.7))
 
-func _draw_leg(attach: Vector2, tip_dir: Vector2, phase: float, color: Color) -> void:
+func _leg_points(attach: Vector2, tip_dir: Vector2, phase: float) -> PackedVector2Array:
+	# Two-segment leg with a knee → 4 points = 2 line segments for draw_multiline
 	var tip  = tip_dir + Vector2(phase, 0)
 	var knee = (attach + tip) / 2.0 + Vector2(0, tip_dir.y * 0.25)
-	draw_line(attach, knee, color, 1.2)
-	draw_line(knee, tip,   color, 1.0)
+	return PackedVector2Array([attach, knee, knee, tip])

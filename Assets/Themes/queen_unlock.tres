@@ -1,0 +1,6 @@
+[gd_resource type="Theme" format=3 uid="uid://cwopqjivlx3ia"]
+
+[ext_resource type="FontFile" uid="uid://c5fapwp3windo" path="res://Assets/Fonts/Jenko-DEMO.ttf" id="1_1eqmp"]
+
+[resource]
+default_font = ExtResource("1_1eqmp")

@@ -78,6 +78,9 @@ func _spawn_floater(amount: float) -> void:
 	get_tree().root.add_child(node)
 	node.setup(amount, amount >= 5.0)
 
+func _ready() -> void:
+	pass
+
 
 func add_sucrose(amount: float) -> void:
 	sucrose          += amount
@@ -162,3 +165,18 @@ func prestige(new_colony_stats) -> void:
 	set_colony(new_colony_stats)
 	EventBus.sucrose_changed.emit(sucrose)
 	EventBus.prestige_triggered.emit(new_colony_stats)
+
+# ─── SAVE: the ONLY place to change what GameManager persists
+func save_data() -> Dictionary:
+	return {
+		"sucrose":          sucrose,
+		"ant_count":        ant_count,
+		"spawn_multiplier": spawn_multiplier,
+		"click_influence":  ant_click_influence,
+	}
+
+func load_data(d: Dictionary) -> void:
+	sucrose             = float(d.get("sucrose", 0.0))
+	ant_count           = int(d.get("ant_count", 0))      # JSON makes ints float
+	spawn_multiplier    = float(d.get("spawn_multiplier", 0.0))
+	ant_click_influence = int(d.get("click_influence", 1))

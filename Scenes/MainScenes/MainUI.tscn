@@ -3,30 +3,19 @@
 [ext_resource type="Script" uid="uid://dvyx4emgnpj2s" path="res://Scripts/MainScripts/MainUI.gd" id="1_hyp62"]
 [ext_resource type="PackedScene" uid="uid://cx5ycnxu8samw" path="res://Scenes/MainScenes/UpgradePanel.tscn" id="2_bw0i0"]
 [ext_resource type="PackedScene" uid="uid://c6n7o1kyogcyv" path="res://Scenes/MainScenes/BattleScene.tscn" id="3_ujxpb"]
-[ext_resource type="Texture2D" uid="uid://cderh4av4eyo" path="res://Assets/UI/top_bar.png" id="4_hyrla"]
 [ext_resource type="Texture2D" uid="uid://mtvm7cjfk5h0" path="res://Assets/UI/spawn_button.png" id="4_osrbs"]
 [ext_resource type="FontFile" uid="uid://c5fapwp3windo" path="res://Assets/Fonts/Jenko-DEMO.ttf" id="5_ouhjm"]
 [ext_resource type="Texture2D" uid="uid://b5l0ktev53hi6" path="res://Assets/UI/spawn_button_pressed.png" id="5_wb172"]
 [ext_resource type="Texture2D" uid="uid://dorsytrnfolq" path="res://Assets/UI/spawn_button_hover.png" id="6_octww"]
-[ext_resource type="Texture2D" uid="uid://bus3wfvieyl12" path="res://Assets/UI/info_panel.png" id="7_ty31w"]
-[ext_resource type="FontFile" uid="uid://b27qv1gmf545v" path="res://Assets/Fonts/PN-Whammy.ttf" id="8_qw6np"]
-[ext_resource type="Texture2D" uid="uid://1fosn0mtcw8s" path="res://Assets/Art/top_circle.png" id="9_grdoe"]
-[ext_resource type="Script" uid="uid://bqs5nm7u1hnab" path="res://Scripts/Objects/sps_label.gd" id="10_7drfd"]
-[ext_resource type="Texture2D" uid="uid://c4klefhcmovyx" path="res://Assets/Art/circle_progress.png" id="10_a4exe"]
-[ext_resource type="FontFile" uid="uid://dlnbkn2s3dxgo" path="res://Assets/Fonts/Bostone.ttf" id="10_j74b8"]
+[ext_resource type="Texture2D" uid="uid://rge01uxaayn3" path="res://Assets/Art/top_progress.png" id="9_icmca"]
+[ext_resource type="Texture2D" uid="uid://dxjro3uc4u8nr" path="res://Assets/Art/top_progress_stroke.png" id="10_dws1n"]
 [ext_resource type="Texture2D" uid="uid://hgqtrt2yacup" path="res://Assets/Art/carpenter_queen.png" id="11_np7ql"]
+[ext_resource type="Texture2D" uid="uid://dri61l6hrkimt" path="res://Assets/Art/top_bar.png" id="12_7qi22"]
 [ext_resource type="Texture2D" uid="uid://c4fycdpjkwmvg" path="res://Assets/Art/ant_head.png" id="12_a4exe"]
-[ext_resource type="Script" uid="uid://ynxx4hlmidgn" path="res://Scripts/MainScripts/ActivityLog.gd" id="13_np7ql"]
 [ext_resource type="AudioStream" uid="uid://c3kls42v2vly" path="res://Assets/Audio/click.wav" id="16_qw6np"]
-[ext_resource type="AudioStream" uid="uid://bijroxdvmvvxx" path="res://Assets/Audio/277033__headphaze__ui-completed-status-alert-notification-sfx001.wav" id="17_icmca"]
 [ext_resource type="Shader" uid="uid://bbh7pv88xaofj" path="res://Scenes/MainScenes/MainUI.gdshader" id="18_dws1n"]
 [ext_resource type="PackedScene" uid="uid://bkcn480p8tval" path="res://Scenes/ObjectScenes/Boosts/SucroseBoost.tscn" id="21_db3p1"]
 [ext_resource type="PackedScene" uid="uid://hgpk76n0px7b" path="res://Scenes/ObjectScenes/ElementPanel.tscn" id="22_7qi22"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_icmca"]
-bg_color = Color(0.47058824, 0.6745098, 0.21176471, 0.69803923)
-corner_radius_bottom_right = 24
-corner_radius_bottom_left = 24
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_np7ql"]
 bg_color = Color(0.29803923, 0.18039216, 0.14117648, 1)
@@ -79,19 +68,19 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("InfoPanel:position")
+tracks/2/path = NodePath("UpgradeButton:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(619, 267)]
+"values": [Vector2(95, 2144)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("InfoPanel:rotation")
+tracks/3/path = NodePath("UpgradeButton:rotation")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -103,19 +92,19 @@ tracks/3/keys = {
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("UpgradeButton:position")
+tracks/4/path = NodePath("SpawnButton:position")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(95, 2144)]
+"values": [Vector2(260, 2104)]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("UpgradeButton:rotation")
+tracks/5/path = NodePath("SpawnButton:rotation")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
@@ -127,19 +116,19 @@ tracks/5/keys = {
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("SpawnButton:position")
+tracks/6/path = NodePath("BattleButton:position")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(260, 2104)]
+"values": [Vector2(836, 2142)]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("SpawnButton:rotation")
+tracks/7/path = NodePath("BattleButton:rotation")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -151,19 +140,19 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("BattleButton:position")
+tracks/8/path = NodePath("SpawnProgress:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(836, 2142)]
+"values": [Vector2(341, 2303)]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("BattleButton:rotation")
+tracks/9/path = NodePath("SpawnProgress:rotation")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -175,19 +164,19 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("SpawnProgress:position")
+tracks/10/path = NodePath("Node2D:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(341, 2303)]
+"values": [Vector2(61, 233)]
 }
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("SpawnProgress:rotation")
+tracks/11/path = NodePath("Node2D:rotation")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
@@ -199,19 +188,19 @@ tracks/11/keys = {
 tracks/12/type = "value"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("Node2D:position")
+tracks/12/path = NodePath("PerksButton:position")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(61, 233)]
+"values": [Vector2(14, 362)]
 }
 tracks/13/type = "value"
 tracks/13/imported = false
 tracks/13/enabled = true
-tracks/13/path = NodePath("Node2D:rotation")
+tracks/13/path = NodePath("PerksButton:rotation")
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
@@ -223,34 +212,10 @@ tracks/13/keys = {
 tracks/14/type = "value"
 tracks/14/imported = false
 tracks/14/enabled = true
-tracks/14/path = NodePath("PerksButton:position")
+tracks/14/path = NodePath("return_ui_button:visible")
 tracks/14/interp = 1
 tracks/14/loop_wrap = true
 tracks/14/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(14, 362)]
-}
-tracks/15/type = "value"
-tracks/15/imported = false
-tracks/15/enabled = true
-tracks/15/path = NodePath("PerksButton:rotation")
-tracks/15/interp = 1
-tracks/15/loop_wrap = true
-tracks/15/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-tracks/16/type = "value"
-tracks/16/imported = false
-tracks/16/enabled = true
-tracks/16/path = NodePath("return_ui_button:visible")
-tracks/16/interp = 1
-tracks/16/loop_wrap = true
-tracks/16/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 1,
@@ -286,19 +251,19 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("InfoPanel:position")
+tracks/2/path = NodePath("UpgradeButton:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0, 1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(619, 267), Vector2(619, -141)]
+"values": [Vector2(95, 2144), Vector2(95, 2520)]
 }
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("InfoPanel:rotation")
+tracks/3/path = NodePath("UpgradeButton:rotation")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -310,19 +275,19 @@ tracks/3/keys = {
 tracks/4/type = "value"
 tracks/4/imported = false
 tracks/4/enabled = true
-tracks/4/path = NodePath("UpgradeButton:position")
+tracks/4/path = NodePath("SpawnButton:position")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
 "times": PackedFloat32Array(0, 1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(95, 2144), Vector2(95, 2520)]
+"values": [Vector2(260, 2104), Vector2(260, 2480)]
 }
 tracks/5/type = "value"
 tracks/5/imported = false
 tracks/5/enabled = true
-tracks/5/path = NodePath("UpgradeButton:rotation")
+tracks/5/path = NodePath("SpawnButton:rotation")
 tracks/5/interp = 1
 tracks/5/loop_wrap = true
 tracks/5/keys = {
@@ -334,19 +299,19 @@ tracks/5/keys = {
 tracks/6/type = "value"
 tracks/6/imported = false
 tracks/6/enabled = true
-tracks/6/path = NodePath("SpawnButton:position")
+tracks/6/path = NodePath("BattleButton:position")
 tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
 "times": PackedFloat32Array(0, 1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(260, 2104), Vector2(260, 2480)]
+"values": [Vector2(836, 2142), Vector2(836, 2518)]
 }
 tracks/7/type = "value"
 tracks/7/imported = false
 tracks/7/enabled = true
-tracks/7/path = NodePath("SpawnButton:rotation")
+tracks/7/path = NodePath("BattleButton:rotation")
 tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
@@ -358,19 +323,19 @@ tracks/7/keys = {
 tracks/8/type = "value"
 tracks/8/imported = false
 tracks/8/enabled = true
-tracks/8/path = NodePath("BattleButton:position")
+tracks/8/path = NodePath("SpawnProgress:position")
 tracks/8/interp = 1
 tracks/8/loop_wrap = true
 tracks/8/keys = {
 "times": PackedFloat32Array(0, 1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(836, 2142), Vector2(836, 2518)]
+"values": [Vector2(341, 2303), Vector2(341, 2679)]
 }
 tracks/9/type = "value"
 tracks/9/imported = false
 tracks/9/enabled = true
-tracks/9/path = NodePath("BattleButton:rotation")
+tracks/9/path = NodePath("SpawnProgress:rotation")
 tracks/9/interp = 1
 tracks/9/loop_wrap = true
 tracks/9/keys = {
@@ -382,23 +347,23 @@ tracks/9/keys = {
 tracks/10/type = "value"
 tracks/10/imported = false
 tracks/10/enabled = true
-tracks/10/path = NodePath("SpawnProgress:position")
+tracks/10/path = NodePath("Node2D:position")
 tracks/10/interp = 1
 tracks/10/loop_wrap = true
 tracks/10/keys = {
-"times": PackedFloat32Array(0, 1),
+"times": PackedFloat32Array(0, 0.99),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(341, 2303), Vector2(341, 2679)]
+"values": [Vector2(61, 233), Vector2(-123, 233)]
 }
 tracks/11/type = "value"
 tracks/11/imported = false
 tracks/11/enabled = true
-tracks/11/path = NodePath("SpawnProgress:rotation")
+tracks/11/path = NodePath("Node2D:rotation")
 tracks/11/interp = 1
 tracks/11/loop_wrap = true
 tracks/11/keys = {
-"times": PackedFloat32Array(0, 1),
+"times": PackedFloat32Array(0, 0.99),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [0.0, 0.0]
@@ -406,19 +371,19 @@ tracks/11/keys = {
 tracks/12/type = "value"
 tracks/12/imported = false
 tracks/12/enabled = true
-tracks/12/path = NodePath("Node2D:position")
+tracks/12/path = NodePath("PerksButton:position")
 tracks/12/interp = 1
 tracks/12/loop_wrap = true
 tracks/12/keys = {
 "times": PackedFloat32Array(0, 0.99),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(61, 233), Vector2(-123, 233)]
+"values": [Vector2(14, 362), Vector2(-170, 362)]
 }
 tracks/13/type = "value"
 tracks/13/imported = false
 tracks/13/enabled = true
-tracks/13/path = NodePath("Node2D:rotation")
+tracks/13/path = NodePath("PerksButton:rotation")
 tracks/13/interp = 1
 tracks/13/loop_wrap = true
 tracks/13/keys = {
@@ -430,34 +395,10 @@ tracks/13/keys = {
 tracks/14/type = "value"
 tracks/14/imported = false
 tracks/14/enabled = true
-tracks/14/path = NodePath("PerksButton:position")
+tracks/14/path = NodePath("return_ui_button:visible")
 tracks/14/interp = 1
 tracks/14/loop_wrap = true
 tracks/14/keys = {
-"times": PackedFloat32Array(0, 0.99),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(14, 362), Vector2(-170, 362)]
-}
-tracks/15/type = "value"
-tracks/15/imported = false
-tracks/15/enabled = true
-tracks/15/path = NodePath("PerksButton:rotation")
-tracks/15/interp = 1
-tracks/15/loop_wrap = true
-tracks/15/keys = {
-"times": PackedFloat32Array(0, 0.99),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.0, 0.0]
-}
-tracks/16/type = "value"
-tracks/16/imported = false
-tracks/16/enabled = true
-tracks/16/path = NodePath("return_ui_button:visible")
-tracks/16/interp = 1
-tracks/16/loop_wrap = true
-tracks/16/keys = {
 "times": PackedFloat32Array(0, 1),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
@@ -474,10 +415,15 @@ _data = {
 script = ExtResource("1_hyp62")
 
 [node name="UpgradeButton" type="Button" parent="." unique_id=1627379309]
-offset_left = 95.0
-offset_top = 2144.0
-offset_right = 240.0
-offset_bottom = 2247.0
+anchors_preset = -1
+anchor_left = -0.040000003
+anchor_top = -0.008
+anchor_right = -0.040000003
+anchor_bottom = -0.008
+offset_left = 138.20001
+offset_top = 2163.2
+offset_right = 283.2
+offset_bottom = 2266.2
 text = "UPGRADE"
 
 [node name="UpgradePanel" parent="." unique_id=1273350527 instance=ExtResource("2_bw0i0")]
@@ -516,132 +462,86 @@ texture_normal = ExtResource("4_osrbs")
 texture_pressed = ExtResource("5_wb172")
 texture_hover = ExtResource("6_octww")
 
-[node name="InfoPanel" type="Sprite2D" parent="." unique_id=1431483897]
-position = Vector2(619, 267)
-scale = Vector2(1.0098522, 1)
-texture = ExtResource("7_ty31w")
-
-[node name="Control" type="Control" parent="InfoPanel" unique_id=936010007]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -398.99997
-offset_top = -15.0
-offset_right = -405.99997
-offset_bottom = -83.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="InfoPanel/Control" unique_id=1446927625]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 6.0
-offset_top = 18.0
-offset_right = -7.0
-offset_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ifno_hb1" type="Label" parent="InfoPanel/Control/HBoxContainer" unique_id=843457172]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_fonts/font = ExtResource("8_qw6np")
-theme_override_font_sizes/font_size = 29
-text = "SUCROSE PER SECOND"
-clip_text = true
-
-[node name="Container" type="Container" parent="InfoPanel/Control/HBoxContainer" unique_id=2040265778]
-custom_minimum_size = Vector2(10, 10)
-layout_mode = 2
-
-[node name="ActivityLog" type="PanelContainer" parent="InfoPanel/Control/HBoxContainer" unique_id=871441530]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_icmca")
-script = ExtResource("13_np7ql")
-
-[node name="SPSLabel" type="Label" parent="InfoPanel/Control/HBoxContainer/ActivityLog" unique_id=1310085287]
-layout_mode = 2
-size_flags_vertical = 1
-theme_override_fonts/font = ExtResource("10_j74b8")
-theme_override_font_sizes/font_size = 31
-horizontal_alignment = 1
-vertical_alignment = 1
-script = ExtResource("10_7drfd")
-
 [node name="TopBar" type="Sprite2D" parent="." unique_id=1282075329]
 position = Vector2(579, 165)
-texture = ExtResource("4_hyrla")
+texture = ExtResource("12_7qi22")
 
 [node name="Control" type="Control" parent="TopBar" unique_id=929069084]
 layout_mode = 3
 anchors_preset = 0
-offset_left = -455.0
-offset_top = -106.0
-offset_right = 448.0
-offset_bottom = 115.0
+offset_left = -484.0
+offset_top = -134.0
+offset_right = 419.0
+offset_bottom = 87.0
 
 [node name="AntsLabel" type="Label" parent="TopBar/Control" unique_id=2080534362]
 layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -812.0
-offset_top = 36.5
-offset_right = -18.0
-offset_bottom = 87.5
+anchors_preset = -1
+anchor_left = 0.98228127
+anchor_top = 0.6628959
+anchor_right = 0.98228127
+anchor_bottom = 0.6628959
+offset_left = -688.0
+offset_top = -98.5
+offset_right = -27.0
+offset_bottom = -47.5
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("5_ouhjm")
 theme_override_font_sizes/font_size = 34
 text = "ANTS:"
-horizontal_alignment = 2
+horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="SucroseLabel" type="Label" parent="TopBar/Control" unique_id=271253961]
 layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
+anchors_preset = -1
+anchor_left = 0.503
 anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -659.0
-offset_top = -31.0
-offset_right = -18.0
-offset_bottom = 31.0
+anchor_right = 1.054
+anchor_bottom = 0.77800006
+offset_left = 6.790985
+offset_top = 12.5
+offset_right = 0.23797607
+offset_bottom = 0.0619812
 grow_horizontal = 0
 grow_vertical = 2
 theme_override_fonts/font = ExtResource("5_ouhjm")
 theme_override_font_sizes/font_size = 36
-text = "SUCROSE:"
+text = "SUCROSE: 0"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="TextureProgressBar" type="TextureProgressBar" parent="TopBar/Control" unique_id=170722908]
+[node name="BattleMeterProgress" type="TextureProgressBar" parent="TopBar/Control" unique_id=170722908]
 layout_mode = 0
-offset_left = -87.0
-offset_top = -25.0
-offset_right = 177.0
-offset_bottom = 237.0
-value = 14.0
+offset_left = -54.0
+offset_top = 23.0
+offset_right = 150.0
+offset_bottom = 234.37347
+value = 65.0
 fill_mode = 4
-texture_under = ExtResource("9_grdoe")
-texture_progress = ExtResource("10_a4exe")
+nine_patch_stretch = true
+texture_under = ExtResource("9_icmca")
+texture_progress = ExtResource("10_dws1n")
+tint_under = Color(0.56640625, 0.43438077, 0.12168884, 1)
+tint_progress = Color(0.5647059, 0.43529412, 0.12156863, 1)
 
 [node name="CarpenterQueen" type="Sprite2D" parent="TopBar/Control" unique_id=1675428604]
+visible = false
 position = Vector2(42.25, 108.56177)
 scale = Vector2(0.35810813, 0.35810822)
 texture = ExtResource("11_np7ql")
 
 [node name="AntHead" type="Sprite2D" parent="TopBar" unique_id=352906324]
-position = Vector2(396, -62)
-scale = Vector2(0.15225564, 0.15225564)
+position = Vector2(-353, -96.00001)
+scale = Vector2(0.085526325, 0.08552634)
+texture = ExtResource("12_a4exe")
+
+[node name="AntHead2" type="Sprite2D" parent="TopBar" unique_id=1394920525]
+position = Vector2(-305, -96)
+scale = Vector2(0.085526325, 0.08552634)
 texture = ExtResource("12_a4exe")
 
 [node name="SpawnProgress" type="ProgressBar" parent="." unique_id=65944241]
@@ -656,12 +556,13 @@ show_percentage = false
 [node name="MOVE_DOWN" type="AnimationPlayer" parent="." unique_id=1421558522]
 
 [node name="Click" type="AudioStreamPlayer2D" parent="." unique_id=674513631]
-position = Vector2(1090, 1151)
+position = Vector2(540, 1200)
 stream = ExtResource("16_qw6np")
 
 [node name="Sugar_fx" type="AudioStreamPlayer2D" parent="." unique_id=1128965571]
-position = Vector2(34, 13)
-stream = ExtResource("17_icmca")
+position = Vector2(3, 6)
+stream = ExtResource("16_qw6np")
+pitch_scale = 1.97
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=2087284652]
 visible = false
@@ -679,12 +580,12 @@ position = Vector2(61, 233)
 [node name="PerksButton" type="Button" parent="." unique_id=1538256344]
 offset_left = 14.0
 offset_top = 362.0
-offset_right = 133.0
+offset_right = 151.0
 offset_bottom = 461.0
 text = "PERKS"
 
 [node name="ElementPanel" parent="." unique_id=1348397101 instance=ExtResource("22_7qi22")]
-position = Vector2(10, 7)
+position = Vector2(1, 1)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=23786920]
 libraries/ = SubResource("AnimationLibrary_rpqgc")
@@ -696,6 +597,11 @@ offset_top = 544.0
 offset_right = 118.0
 offset_bottom = 625.0
 text = "RETURN"
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1096156477]
+position = Vector2(541, 1204)
+
+[node name="Node" type="Node" parent="." unique_id=2117646186]
 
 [connection signal="pressed" from="BattleButton" to="." method="_on_battle_button_pressed"]
 [connection signal="pressed" from="return_ui_button" to="." method="_on_return_ui_button_pressed"]

@@ -2,7 +2,7 @@ extends Node2D
 
 # ─── EXPORTS ──────────────────────────────────────────────────────────────────
 @export_group("Economy")
-@export var max_food: int = 12
+@export var max_food: int = 20
 
 @export_group("Spawn Zone")
 @export_range(0.0, 1.0) var min_x: float = 0.1
@@ -11,7 +11,7 @@ extends Node2D
 @export_range(0.0, 1.0) var max_y: float = 0.7
 
 @export_group("Timing")
-@export var respawn_delay: float = 5.0
+@export var respawn_delay: float = 2.0
 
 # ─── INTERNALS ────────────────────────────────────────────────────────────────
 const FoodScene = preload("res://Scenes/ObjectScenes/FoodNode.tscn")
